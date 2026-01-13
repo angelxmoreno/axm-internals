@@ -40,6 +40,7 @@ Rules:
 * Turborepo orchestrates repo-wide tasks (lint, test, check-types, validate)
 * All packages are versioned and published via Changesets
 * `package.json` always follows the canonical form:
+  * Exception: config-only, non-published support packages (e.g., `@axm/typescript-config`)
 
 ```json
 {

@@ -1,5 +1,19 @@
 # axm-internals
 
+## Creating a new package
+
+Use the Bun template:
+
+```bash
+bun create axm-package packages/<name>
+```
+
+You will be prompted for the package name and a short description. The template also creates
+`docs/` and `llms.txt` to satisfy the documentation requirements.
+Because the template installs dev dependencies, the post-create hook runs automatically and
+removes its temporary `scripts/` folder.
+It also removes the nested `.git` folder created by `bun create`.
+
 To install dependencies:
 
 ```bash

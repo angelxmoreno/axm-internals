@@ -28,7 +28,7 @@ const path = require('node:path');
             shouldPrompt = false;
         }
     }
-  if (shouldPrompt && (!packageName || !description)) {
+    if (shouldPrompt && (!packageName || !description)) {
         const rl = readline.createInterface({ input: promptInput, output: promptOutput });
 
         const nameAnswer = shouldPrompt ? (await rl.question(`Package name (${defaultName}): `)).trim() : '';
@@ -75,10 +75,7 @@ const path = require('node:path');
         try {
             await rm(target, { recursive: true, force: true });
         } catch (error) {
-            console.warn(
-                `Cleanup warning: failed to remove ${label}:`,
-                error instanceof Error ? error.message : error,
-            );
+            console.warn(`Cleanup warning: failed to remove ${label}:`, error instanceof Error ? error.message : error);
         }
     }
 })().catch((error) => {

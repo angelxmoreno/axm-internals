@@ -56,21 +56,24 @@ Consistency is leverage.
 
 ## 2. Creating New Packages
 
-The monorepo provides a CLI for creating new packages:
+Two supported approaches:
+
+### A) Local `bun create` template
 
 ```bash
-bunx axm create-package <name>
+# create inside packages/
+bun create axm-package packages/logger
 ```
 
-This command:
+This template:
 
 * Creates `packages/<name>/`
 * Writes the canonical `package.json`
-* Creates `src/index.ts`
-* Creates `tests/`
-* Creates `README.md`
-* Optionally scaffolds an initial test
-* Optionally generates a Changeset
+* Creates `src/index.ts`, `tests/`, `README.md`
+* Adds `docs/` and `llms.txt`
+* Prompts for package name + description
+* Installs dev dependencies so the post-create hook can run
+* Removes the nested `.git` folder created by `bun create`
 
 All packages are born correct.
 

@@ -44,13 +44,14 @@ packages/<name>/
 
 ## Creating New Packages
 
-Use the repo CLI:
+Use the local Bun template:
 
 ```
-bunx axm create-package <name>
+bun create axm-package packages/<name>
 ```
 
-This scaffolds the package, README, tests, optional initial test, and optional changeset.
+This scaffolds the canonical package shape (src, tests, README, docs, llms.txt) and prompts for name/description.
+Dev dependencies are installed so the post-create hook runs and removes its temporary `scripts/` folder.
 
 ## Testing
 

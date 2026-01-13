@@ -14,6 +14,9 @@ Canonical package layout:
 
 ```
 packages/<name>/
+  docs/
+    README.md
+  llms.txt
   package.json
   README.md
   src/
@@ -30,7 +33,6 @@ packages/<name>/
 {
   "name": "@axm/<name>",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
   "main": "src/index.ts",
   "publishConfig": {

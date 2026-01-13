@@ -21,6 +21,9 @@ All internal packages live under `packages/` and follow the same shape:
 
 ```
 packages/<name>/
+  docs/
+    README.md
+  llms.txt
   package.json
   README.md
   src/
@@ -41,7 +44,6 @@ Rules:
 {
   "name": "@axm/<name>",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
   "main": "src/index.ts",
   "publishConfig": {
@@ -98,7 +100,7 @@ Guidelines:
 * Tests are grouped by intent:
 
     * `tests/unit/` – pure logic
-    * `tests/integration/` – filesystem, process, IO, etc
+    * `tests/integration/` – filesystem, process, IO, etc.
 * Packages may add more layers if needed (e.g. `e2e/`)
 
 A shared `@axm/test-helpers` package may provide:

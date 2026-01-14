@@ -19,6 +19,7 @@
         "check-types": "turbo run check-types",
         "test": "turbo run test",
         "test:watch": "turbo run test:watch",
+        "test:coverage": "turbo run test:coverage",
         "lint": "turbo run lint",
         "lint:root": "biome check --write --config-path=biome.root.json",
         "lint:fix": "bun lint:root && turbo run lint:fix",

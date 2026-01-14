@@ -1,0 +1,42 @@
+{
+    "name": "@axm/zod-helpers",
+    "version": "0.1.0",
+    "type": "module",
+    "main": "src/index.ts",
+    "description": "A collection of Zod v4 helpers",
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
+    },
+    "scripts": {
+        "test": "bun test",
+        "lint": "biome check .",
+        "lint:fix": "biome check --write .",
+        "check-types": "tsc --noEmit",
+        "docs": "typedoc",
+        "validate": "echo \"Validated\""
+    },
+    "devDependencies": {
+        "@axm/typescript-config": "*",
+        "axios": "^1.13.2",
+        "pino": "^10.1.1",
+        "typedoc": "^0.28.2",
+        "typedoc-plugin-markdown": "^4.8.1",
+        "typescript": "^5",
+        "@types/bun": "^1.3"
+    },
+    "dependencies": {
+        "zod": "^4.3.5"
+    },
+    "peerDependencies": {
+        "axios": "^1.13.2",
+        "pino": "^10.1.1"
+    },
+    "peerDependenciesMeta": {
+        "axios": {
+            "optional": true
+        },
+        "pino": {
+            "optional": true
+        }
+    }
+}

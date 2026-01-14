@@ -24,6 +24,7 @@ It also removes the nested `.git` folder created by `bun create`.
 ## Docs
 
 - `monorepo-docs/package-checklist.md`
+- `monorepo-docs/intro-to-changesets.md`
 
 To install dependencies:
 
@@ -38,3 +39,17 @@ bun run index.ts
 ```
 
 This project was created using `bun init` in bun v1.3.4. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+
+## Releases
+
+We use Changesets for versioning and publishing to GitHub Packages.
+
+Flow:
+
+1. Make your changes.
+2. Run `bun changeset` and select the packages + bump type.
+3. Commit the changeset file with your code.
+4. Merge to `main`.
+5. The Release workflow runs and publishes updated packages.
+
+See `monorepo-docs/intro-to-changesets.md` for details.

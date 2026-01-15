@@ -52,7 +52,6 @@ jobs:
         if: ${{ hashFiles(matrix.junit) != '' }}
         run: |
           bunx codecov do-upload \
-            --disable-search \
             --report-type test_results \
             -f "${{ matrix.junit }}" \
             -F "${{ matrix.target }}"

@@ -52,7 +52,7 @@ for root in "${roots[@]}"; do
 
     if [[ -f "$junit" ]]; then
       echo "Uploading test results for $name ($junit)"
-      test_args=(do-upload --disable-search -f "$junit" --report-type test_results -F "$name")
+      test_args=(do-upload -f "$junit" --report-type test_results -F "$name")
 
       if [[ -n "$commit_sha" ]]; then
         test_args+=(-C "$commit_sha")

@@ -52,17 +52,7 @@ for root in "${roots[@]}"; do
 
     if [[ -f "$junit" ]]; then
       echo "Uploading test results for $name ($junit)"
-      test_args=(do-upload -f "$junit" --report-type test_results -F "$name")
-
-      if [[ -n "$commit_sha" ]]; then
-        test_args+=(-C "$commit_sha")
-      fi
-
-      if [[ -n "$branch_name" ]]; then
-        test_args+=(-B "$branch_name")
-      fi
-
-      bunx codecov "${test_args[@]}"
+      bunx codecov process-test-results -f "$junit"
     else
       echo "Skipping missing test results file: $junit"
     fi

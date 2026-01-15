@@ -20,10 +20,6 @@ jobs:
             path: packages/zod-helpers/coverage/lcov.info
             junit: packages/zod-helpers/junit.xml
             dir: packages/zod-helpers
-          - target: typescript-config
-            path: packages/typescript-config/coverage/lcov.info
-            junit: packages/typescript-config/junit.xml
-            dir: packages/typescript-config
           - target: prompt-runner
             path: apps/prompt-runner/coverage/lcov.info
             junit: apps/prompt-runner/junit.xml
@@ -51,10 +47,8 @@ jobs:
       - name: Upload test results
         run: |
           if [[ -f "${{ matrix.junit }}" ]]; then
-            bunx codecov do-upload \
-              --report-type test_results \
-              -f "${{ matrix.junit }}" \
-              -F "${{ matrix.target }}"
+            bunx codecov process-test-results \
+              -f "${{ matrix.junit }}"
           else
             echo "Skipping missing test results file: ${{ matrix.junit }}"
           fi

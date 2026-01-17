@@ -216,6 +216,7 @@ export class CliApp {
                 }
                 if (String(error.code).startsWith('commander.')) {
                     this.lastError = normalizedError;
+                    this.onError?.(normalizedError);
                     this.onExit?.(1, normalizedError);
                     return 1;
                 }

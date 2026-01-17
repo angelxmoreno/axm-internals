@@ -16,9 +16,11 @@ describe('registerCommandDefinition', () => {
             definition: {
                 name: 'hello',
                 description: 'says hello',
-                arguments: [{ name: '<first>' }, { name: '<last>' }],
-                options: [{ flags: '-d, --debug', description: 'enable debug' }],
-                argsSchema: z.tuple([z.string(), z.string()]),
+                argsSchema: z.object({
+                    first: z.string(),
+                    last: z.string(),
+                }),
+                argPositions: ['first', 'last'],
                 optionsSchema: z.object({ debug: z.boolean().optional() }),
                 action: async (ctx) => {
                     received = ctx;
@@ -29,13 +31,13 @@ describe('registerCommandDefinition', () => {
         await program.parseAsync(['hello', 'Ada', 'Lovelace', '--debug'], { from: 'user' });
 
         expect(received).toEqual({
-            args: ['Ada', 'Lovelace'],
+            args: { first: 'Ada', last: 'Lovelace' },
             options: { debug: true },
             container,
         });
     });
 
-    it('passes raw args and options when schemas are not provided', async () => {
+    it('infers argPositions when a single arg is defined', async () => {
         const program = new Command();
         const container = new InMemoryContainer();
         let received: unknown;
@@ -46,19 +48,42 @@ describe('registerCommandDefinition', () => {
             definition: {
                 name: 'echo',
                 description: 'echoes input',
-                arguments: [{ name: '<first>' }, { name: '<second>' }],
+                argsSchema: z.object({
+                    message: z.string(),
+                }),
                 action: async (ctx) => {
                     received = ctx;
                 },
             },
         });
 
-        await program.parseAsync(['echo', 'one', 'two'], { from: 'user' });
+        await program.parseAsync(['echo', 'hello'], { from: 'user' });
 
         expect(received).toEqual({
-            args: ['one', 'two'],
+            args: { message: 'hello' },
             options: {},
             container,
         });
+    });
+
+    it('throws when multiple args are defined without argPositions', () => {
+        const program = new Command();
+        const container = new InMemoryContainer();
+
+        expect(() =>
+            registerCommandDefinition({
+                program,
+                container,
+                definition: {
+                    name: 'multi',
+                    description: 'multi args',
+                    argsSchema: z.object({
+                        first: z.string(),
+                        second: z.string(),
+                    }),
+                    action: async () => undefined,
+                },
+            })
+        ).toThrow('argPositions is required when argsSchema has multiple keys.');
     });
 });

@@ -18,7 +18,7 @@ It also removes the nested `.git` folder created by `bun create`.
 
 - `packages/cli-helper/README.md`
 - `packages/zod-helpers/README.md`
-- `packages/typescript-config/README.md`
+- `packages/tooling-config/README.md`
 - `apps/prompt-runner/README.md`
 
 ## Examples Repo

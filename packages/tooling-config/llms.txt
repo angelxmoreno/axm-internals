@@ -1,21 +1,23 @@
-# @axm-internal/typescript-config
+# @axm-internal/tooling-config
+
 Version: 0.1.0
 
 Purpose:
-- Shared TypeScript configurations
+- Shared tooling configurations for the monorepo, starting with TypeScript.
 
 Public surface:
 - tsconfig.json
 - tsconfig.apps.json
 - tsconfig.packages.json
 - tsconfig.decorators.json
+- typedoc.json
 - No runtime exports (config-only package)
 
 Intended usage:
-- Internal @axm-internal consumers
+- Internal @axm-internal consumers configuring tooling.
 
 Non-goals:
-- External/public API stability
+- External/public API stability for tooling configs.
 
 Stability expectations:
 - Semver within axm-internals

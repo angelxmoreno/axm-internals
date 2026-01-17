@@ -29,7 +29,7 @@ packages/<name>/
 
 - Package name: `@axm-internal/<kebab-name>`
 - `package.json` must follow the canonical form:
-  - Exception: `@axm-internal/typescript-config` is config-only and non-published.
+  - Exception: `@axm-internal/tooling-config` is config-only and non-published.
 
 ```
 {

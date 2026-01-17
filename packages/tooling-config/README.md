@@ -1,10 +1,10 @@
-# @axm-internal/typescript-config
+# @axm-internal/tooling-config
 
-Centralized TypeScript configurations for the monorepo.
+Centralized tooling configurations for the monorepo, starting with TypeScript.
 
 > Status: config-only, non-published support package.
 
-## Architecture
+## TypeScript Architecture
 
 This package provides a hierarchical TypeScript configuration system:
 
@@ -39,12 +39,18 @@ Extends packages configuration for decorator-using packages:
 - Decorator metadata emission
 - Relaxed property initialization for TypeORM entities
 
+### `typedoc.json`
+Shared Typedoc configuration used by packages and apps:
+- Markdown output
+- Standard docs directory
+- Consistent git revision handling
+
 ## Usage
 
 ### For Apps (CLI, Web)
 ```json
 {
-  "extends": "@axm-internal/typescript-config/tsconfig.apps.json",
+  "extends": "@axm-internal/tooling-config/tsconfig.apps.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src"
@@ -55,14 +61,14 @@ Extends packages configuration for decorator-using packages:
 ### For Regular Packages (shared-core, shared-services)
 ```json
 {
-  "extends": "@axm-internal/typescript-config/tsconfig.packages.json"
+  "extends": "@axm-internal/tooling-config/tsconfig.packages.json"
 }
 ```
 
 ### For Decorator Packages (database, queues)
 ```json
 {
-  "extends": "@axm-internal/typescript-config/tsconfig.decorators.json"
+  "extends": "@axm-internal/tooling-config/tsconfig.decorators.json"
 }
 ```
 

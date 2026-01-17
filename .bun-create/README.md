@@ -24,7 +24,7 @@ The `axm-package` template creates:
 - `README.md`
 - `docs/README.md`
 - `llms.txt`
-- A monorepo-scoped setup that depends on `@axm-internal/typescript-config` (this template is not intended for use outside `axm-internals`)
+- A monorepo-scoped setup that depends on `@axm-internal/tooling-config` (this template is not intended for use outside `axm-internals`)
 
 It also installs dev dependencies and runs a `postinstall` script (Node) that:
 

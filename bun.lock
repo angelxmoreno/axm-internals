@@ -25,7 +25,7 @@
         "eta": "^3.5.0",
       },
       "devDependencies": {
-        "@axm-internal/typescript-config": "*",
+        "@axm-internal/tooling-config": "*",
         "@types/bun": "^1.3",
         "typedoc": "^0.28.2",
         "typedoc-plugin-markdown": "^4.8.1",
@@ -44,7 +44,7 @@
         "zod": "^4.3.5",
       },
       "devDependencies": {
-        "@axm-internal/typescript-config": "*",
+        "@axm-internal/tooling-config": "*",
         "@types/bun": "^1.3",
         "typedoc": "^0.28.16",
         "typedoc-plugin-markdown": "^4.9.0",
@@ -54,8 +54,8 @@
         "tsyringe": "^4.10.0",
       },
     },
-    "packages/typescript-config": {
-      "name": "@axm-internal/typescript-config",
+    "packages/tooling-config": {
+      "name": "@axm-internal/tooling-config",
       "version": "0.1.0",
     },
     "packages/zod-helpers": {
@@ -65,7 +65,7 @@
         "zod": "^4.3.5",
       },
       "devDependencies": {
-        "@axm-internal/typescript-config": "*",
+        "@axm-internal/tooling-config": "*",
         "@types/bun": "^1.3",
         "axios": "^1.13.2",
         "pino": "^10.1.1",
@@ -88,7 +88,7 @@
 
     "@axm-internal/prompt-runner": ["@axm-internal/prompt-runner@workspace:apps/prompt-runner"],
 
-    "@axm-internal/typescript-config": ["@axm-internal/typescript-config@workspace:packages/typescript-config"],
+    "@axm-internal/tooling-config": ["@axm-internal/tooling-config@workspace:packages/tooling-config"],
 
     "@axm-internal/zod-helpers": ["@axm-internal/zod-helpers@workspace:packages/zod-helpers"],
 

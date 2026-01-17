@@ -1,9 +1,4 @@
 {
-    "$schema": "https://typedoc.org/schema.json",
-    "entryPoints": ["src/index.ts"],
-    "out": "docs",
-    "excludeInternal": true,
-    "plugin": ["typedoc-plugin-markdown"],
-    "readme": "README.md",
-    "gitRevision": "main"
+    "extends": "../tooling-config/typedoc.json",
+    "entryPoints": ["src/index.ts"]
 }

@@ -16,19 +16,30 @@ It also removes the nested `.git` folder created by `bun create`.
 
 ## Packages
 
-- `packages/cli-helper/README.md`
-- `packages/zod-helpers/README.md`
-- `packages/tooling-config/README.md`
-- `apps/prompt-runner/README.md`
+- [`packages/cli-kit/README.md`](./packages/cli-kit/README.md)
+- [`packages/zod-helpers/README.md`](./packages/zod-helpers/README.md)
+- [`packages/tooling-config/README.md`](./packages/tooling-config/README.md)
+- [`apps/prompt-runner/README.md`](./apps/prompt-runner/README.md)
+- [`apps/repo-cli/README.md`](./apps/repo-cli/README.md)
 
 ## Examples Repo
 
-`axm-internals/axm-examples` is the companion repo for testing published `@axm-internal/*` packages.
+[`axm-internal/axm-examples`](https://github.com/axm-internal/axm-examples) is the companion repo for testing published `@axm-internal/*` packages.
 
 ## Docs
 
-- `monorepo-docs/package-checklist.md`
-- `monorepo-docs/intro-to-changesets.md`
+- [`monorepo-docs/package-checklist.md`](./monorepo-docs/package-checklist.md)
+- [`monorepo-docs/intro-to-changesets.md`](./monorepo-docs/intro-to-changesets.md)
+
+## Repo CLI
+
+Use the root `repo-cli` helper to run monorepo CLI workflows:
+
+```bash
+./repo-cli prompt:checklist packages/zod-helpers
+```
+
+See [`apps/repo-cli/README.md`](./apps/repo-cli/README.md) for the full command list.
 
 To install dependencies:
 
@@ -56,7 +67,7 @@ Flow:
 4. Merge to `main`.
 5. The Release workflow runs and publishes updated packages.
 
-See `monorepo-docs/intro-to-changesets.md` for details.
+See [`monorepo-docs/intro-to-changesets.md`](./monorepo-docs/intro-to-changesets.md) for details.
 
 ## Coverage
 

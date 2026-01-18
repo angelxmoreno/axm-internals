@@ -10,9 +10,9 @@
 
 ## Packages
 1. api-kit: like cli-kit but for hono
-2. config-builder
+2. [bootcfg](./feat/bootcfg.md)
 3. typeorm-helpers
 4. queue-kit
 5. util-kit: for shared types, schemas and interfaces
-6. muffin-runner: an execa wrapper to simplify execa api to behave like Bun.$
+6. [cli-runner](./feat/cli-runner.md)
 7. 

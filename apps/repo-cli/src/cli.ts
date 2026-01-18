@@ -7,7 +7,7 @@ import { typedocCommand } from './commands/typedocCommand';
 const cliApp = new CliApp({
     config: {
         name: 'repo-cli',
-        description: 'Run Codex prompt runners for this monorepo.',
+        description: 'Run monorepo CLI workflows and automation tasks.',
         version: '0.2.0',
     },
     options: {

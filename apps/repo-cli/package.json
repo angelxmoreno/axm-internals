@@ -4,7 +4,7 @@
     "private": true,
     "type": "module",
     "main": "src/cli.ts",
-    "description": "Codex prompt runner CLI for axm-internals",
+    "description": "Monorepo CLI task runner and automation entrypoint",
     "scripts": {
         "dev": "bun src/cli.ts",
         "lint": "biome check .",

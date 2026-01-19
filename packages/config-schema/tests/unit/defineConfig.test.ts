@@ -37,16 +37,20 @@ describe('defineConfig', () => {
 
     it('loads .env and .env.{NODE_ENV} when envDir is provided', () => {
         const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'config-schema-'));
-        writeEnv(dir, '.env', 'PORT=3000\n');
-        writeEnv(dir, '.env.test', 'PORT=4000\n');
+        try {
+            writeEnv(dir, '.env', 'PORT=3000\n');
+            writeEnv(dir, '.env.test', 'PORT=4000\n');
 
-        process.env.NODE_ENV = 'test';
+            process.env.NODE_ENV = 'test';
 
-        const schema = z.object({
-            port: env('PORT', z.coerce.number()),
-        });
+            const schema = z.object({
+                port: env('PORT', z.coerce.number()),
+            });
 
-        const runtime = defineConfig(schema, { envDir: dir });
-        expect(runtime.port).toBe(4000);
+            const runtime = defineConfig(schema, { envDir: dir });
+            expect(runtime.port).toBe(4000);
+        } finally {
+            fs.rmSync(dir, { recursive: true, force: true });
+        }
     });
 });

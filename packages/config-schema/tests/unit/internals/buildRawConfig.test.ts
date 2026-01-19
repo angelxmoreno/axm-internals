@@ -75,4 +75,21 @@ describe('buildRawConfig', () => {
         expect('requiredValue' in raw).toBeTrue();
         expect(raw.requiredValue).toBeUndefined();
     });
+
+    it('omits optional objects when no child values are present', () => {
+        setEnv('OPTIONAL_URL', undefined);
+
+        const schema = z.object({
+            optionalBlock: z
+                .object({
+                    url: env('OPTIONAL_URL', z.string()),
+                })
+                .optional(),
+        });
+
+        const tree = walkSchema(schema);
+        const raw = buildRawConfig(tree) as { optionalBlock?: { url?: string } };
+
+        expect(raw.optionalBlock).toBeUndefined();
+    });
 });

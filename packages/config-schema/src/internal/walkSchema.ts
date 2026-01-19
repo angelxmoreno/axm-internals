@@ -16,7 +16,7 @@ export function walkSchema(schema: ZodType): InternalNode {
         throw new Error('defineConfig() expects a Zod object at the root');
     }
 
-    return walkObject(schema, []);
+    return walkObject(schema, [], false);
 }
 
 /**
@@ -29,7 +29,7 @@ export function walkSchema(schema: ZodType): InternalNode {
  * Child paths are appended as keys are visited.
  * @internal
  */
-function walkObject(schema: ZodObject, path: string[]): InternalObjectNode {
+function walkObject(schema: ZodObject, path: string[], optional: boolean): InternalObjectNode {
     const { shape } = schema;
     const children: Record<string, InternalNode> = {};
 
@@ -42,6 +42,7 @@ function walkObject(schema: ZodObject, path: string[]): InternalObjectNode {
         kind: 'object',
         path,
         children,
+        optional,
     };
 }
 
@@ -59,7 +60,7 @@ function walkNode(schema: ZodType, path: string[]): InternalNode {
     const { base, optional } = unwrap(schema);
 
     if (base instanceof ZodObject) {
-        return walkObject(base, path);
+        return walkObject(base, path, optional);
     }
 
     const meta = getSchemaMeta<SchemaMeta>(base);

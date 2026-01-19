@@ -39,6 +39,13 @@ export interface InternalObjectNode extends InternalBaseNode {
      * @internal
      */
     children: Record<string, InternalNode>;
+
+    /**
+     * Whether the object is optional.
+     *
+     * @internal
+     */
+    optional: boolean;
 }
 
 /**

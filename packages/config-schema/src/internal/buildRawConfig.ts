@@ -15,7 +15,7 @@ export const buildRawConfig = (root: InternalNode): Record<string, unknown> => {
         throw new Error('Root node must be an object');
     }
 
-    return buildObject(root);
+    return buildObject(root).value;
 };
 
 /**
@@ -27,12 +27,18 @@ export const buildRawConfig = (root: InternalNode): Record<string, unknown> => {
  * Object children are always included, leaf children are conditional.
  * @internal
  */
-const buildObject = (node: InternalObjectNode): Record<string, unknown> => {
+const buildObject = (node: InternalObjectNode): { value: Record<string, unknown>; hasValues: boolean } => {
     const out: Record<string, unknown> = {};
+    let hasValues = false;
 
     for (const [key, child] of Object.entries(node.children)) {
         if (child.kind === 'object') {
-            out[key] = buildObject(child);
+            const childResult = buildObject(child);
+            if (child.optional && !childResult.hasValues) {
+                continue;
+            }
+            out[key] = childResult.value;
+            hasValues = hasValues || childResult.hasValues;
             continue;
         }
 
@@ -40,9 +46,10 @@ const buildObject = (node: InternalObjectNode): Record<string, unknown> => {
         if (resolved.shouldSet) {
             out[key] = resolved.value;
         }
+        hasValues = hasValues || resolved.hasValue;
     }
 
-    return out;
+    return { value: out, hasValues };
 };
 
 /**
@@ -54,17 +61,19 @@ const buildObject = (node: InternalObjectNode): Record<string, unknown> => {
  * Optional leaves are omitted when no env value is present.
  * @internal
  */
-const resolveLeaf = (node: InternalLeafNode): { shouldSet: boolean; value: unknown } => {
+const resolveLeaf = (node: InternalLeafNode): { shouldSet: boolean; value: unknown; hasValue: boolean } => {
     if (!node.env) {
-        return { shouldSet: false, value: undefined };
+        return { shouldSet: false, value: undefined, hasValue: false };
     }
 
     const envName = node.env === 'auto' ? inferEnvName(node.path) : node.env;
 
     const raw = process.env[envName];
     if (raw === undefined) {
-        return node.optional ? { shouldSet: false, value: undefined } : { shouldSet: true, value: undefined };
+        return node.optional
+            ? { shouldSet: false, value: undefined, hasValue: false }
+            : { shouldSet: true, value: undefined, hasValue: false };
     }
 
-    return { shouldSet: true, value: raw };
+    return { shouldSet: true, value: raw, hasValue: true };
 };

@@ -27,17 +27,17 @@ import { z } from 'zod';
 
 const config = defineConfig(
     z.object({
-        http: {
+        http: z.object({
             port: z.coerce.number().default(3000),
             host: z.string().default('0.0.0.0'),
-        },
-        logger: {
+        }),
+        logger: z.object({
             path: autoEnv(z.string()).optional(),
-        },
-        db: {
+        }),
+        db: z.object({
             url: env('DATABASE_URL', z.string().url()),
             poolSize: z.number().int().min(1).default(10),
-        },
+        }),
     }),
     { envDir: process.cwd() }
 );

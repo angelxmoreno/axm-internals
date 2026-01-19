@@ -85,6 +85,7 @@ Dev dependencies are installed so the post-create hook runs and removes its temp
 - `ZodEffects` does not exist in v4. Refinements live inside schemas; transforms use `ZodPipe`.
 - Wrapper-specific internals (like `innerType`) require narrowing to the wrapper type.
 - Prefer `z.ZodType` over `z.ZodTypeAny`; `ZodTypeAny` is no longer needed in this repo.
+- Prefer `z.core.$ZodIssue` from `@zod/core` when building libraries on top of Zod.
 
 ## Documentation Requirements (Promotion Gate)
 

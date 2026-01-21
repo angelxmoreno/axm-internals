@@ -131,4 +131,43 @@ describe('registerCommandDefinition', () => {
             container,
         });
     });
+
+    it('unwraps defaults and preserves inner metadata', async () => {
+        const program = new Command();
+        const container = new InMemoryContainer();
+        let received: unknown;
+
+        const argsSchema = z.object({
+            name: z.string().meta({ description: 'person to greet' }).default('World'),
+        });
+        const optionsSchema = z.object({
+            count: z.number().meta({ description: 'repeat count' }).default(2),
+        });
+
+        registerCommandDefinition({
+            program,
+            container,
+            definition: {
+                name: 'repeat',
+                description: 'repeats a greeting',
+                argsSchema,
+                optionsSchema,
+                action: async (ctx) => {
+                    received = ctx;
+                },
+            },
+        });
+
+        const command = program.commands[0];
+        expect(command?.helpInformation()).toContain('person to greet');
+        expect(command?.helpInformation()).toContain('repeat count');
+
+        await program.parseAsync(['repeat'], { from: 'user' });
+
+        expect(received).toEqual({
+            args: { name: 'World' },
+            options: { count: 2 },
+            container,
+        });
+    });
 });

@@ -14,8 +14,7 @@ type SchemaDetails = {
 };
 
 const getObjectShape = (schema: z.ZodObject<z.ZodRawShape>) => {
-    const { shape } = schema as unknown as { shape: z.ZodRawShape | (() => z.ZodRawShape) };
-    return typeof shape === 'function' ? shape() : shape;
+    return schema.shape;
 };
 
 type SchemaMeta = {
@@ -26,24 +25,31 @@ type SchemaMeta = {
 const getSchemaDetails = (schema: ZodType): SchemaDetails => {
     let current = schema;
     let isOptional = false;
-    let defaultValue: unknown;
     let meta = getSchemaMeta<SchemaMeta>(current);
 
-    const unwrapSchema = (value: ZodType) => (value as unknown as { unwrap: () => unknown }).unwrap() as ZodType;
-
-    while (current instanceof z.ZodOptional || current instanceof z.ZodNullable) {
-        isOptional = true;
-        current = unwrapSchema(current);
-        if (!meta.description && meta.defaultValue === undefined) {
-            meta = getSchemaMeta<SchemaMeta>(current);
+    const unwrapSchema = (value: ZodType) => {
+        if (value instanceof z.ZodOptional || value instanceof z.ZodNullable || value instanceof z.ZodDefault) {
+            return value.unwrap() as ZodType;
         }
-    }
+        if (value instanceof z.ZodPipe) {
+            return value.in as ZodType;
+        }
+        return value;
+    };
 
-    if (current instanceof z.ZodDefault) {
-        isOptional = true;
-        const { def } = current as z.ZodDefault<ZodType>;
-        defaultValue = def?.defaultValue;
-        current = unwrapSchema(current);
+    while (true) {
+        if (current instanceof z.ZodOptional || current instanceof z.ZodNullable) {
+            isOptional = true;
+        }
+        if (current instanceof z.ZodDefault) {
+            isOptional = true;
+        }
+
+        const next = unwrapSchema(current);
+        if (next === current) {
+            break;
+        }
+        current = next;
         if (!meta.description && meta.defaultValue === undefined) {
             meta = getSchemaMeta<SchemaMeta>(current);
         }
@@ -51,7 +57,7 @@ const getSchemaDetails = (schema: ZodType): SchemaDetails => {
 
     return {
         description: meta.description,
-        defaultValue: meta.defaultValue ?? defaultValue,
+        defaultValue: meta.defaultValue,
         isOptional,
         baseSchema: current,
     };

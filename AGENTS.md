@@ -87,6 +87,9 @@ Dev dependencies are installed so the post-create hook runs and removes its temp
 - Wrapper-specific internals (like `innerType`) require narrowing to the wrapper type.
 - Prefer `z.ZodType` over `z.ZodTypeAny`; `ZodTypeAny` is no longer needed in this repo.
 - Prefer `z.core.$ZodIssue` from `@zod/core` when building libraries on top of Zod.
+- Use the public `.shape` accessor on `ZodObject` (avoid `def.shape`).
+- Use public `.unwrap()` on `ZodOptional`, `ZodNullable`, and `ZodDefault`; avoid `def.innerType`.
+- For pipes, use the public `.in` field on `ZodPipe` to access the input schema.
 
 ## Documentation Requirements (Promotion Gate)
 

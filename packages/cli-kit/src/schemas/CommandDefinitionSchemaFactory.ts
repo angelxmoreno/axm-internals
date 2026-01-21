@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { CommandActionSchemaFactory } from './CommandActionSchemaFactory';
 
-const ZodObjectSchema = z.custom<z.ZodObject<z.ZodRawShape>>((value) => value instanceof z.ZodObject);
+const ZodObjectSchema = z.instanceof(z.ZodObject, { error: 'Expected a Zod object schema.' });
 
 /**
  * Build a Zod schema for a command definition.

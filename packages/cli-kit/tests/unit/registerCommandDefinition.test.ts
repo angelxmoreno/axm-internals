@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test';
+import { getMetaValue } from '@axm-internal/zod-helpers';
 import { Command } from 'commander';
-import { z } from 'zod';
+import { type ZodType, z } from 'zod';
 import { InMemoryContainer } from '../../src/containers/InMemoryContainer';
 import { registerCommandDefinition } from '../../src/registerCommandDefinition';
 
@@ -85,5 +86,49 @@ describe('registerCommandDefinition', () => {
                 },
             })
         ).toThrow('argPositions is required when argsSchema has multiple keys.');
+    });
+
+    it('uses metadata descriptions and defaults for args and options', async () => {
+        const program = new Command();
+        const container = new InMemoryContainer();
+        let received: unknown;
+
+        const argsSchema = z.object({
+            name: z.string().optional().meta({ description: 'person to greet', defaultValue: 'World' }),
+        });
+        const optionsSchema = z.object({
+            debug: z.boolean().optional().meta({ description: 'enable debug', defaultValue: false }),
+        });
+
+        expect(getMetaValue<{ description: string }, ZodType>(argsSchema.shape.name, 'description')).toBe(
+            'person to greet'
+        );
+        expect(getMetaValue<{ defaultValue: string }, ZodType>(argsSchema.shape.name, 'defaultValue')).toBe('World');
+
+        registerCommandDefinition({
+            program,
+            container,
+            definition: {
+                name: 'hello',
+                description: 'says hello',
+                argsSchema,
+                optionsSchema,
+                action: async (ctx) => {
+                    received = ctx;
+                },
+            },
+        });
+
+        const command = program.commands[0];
+        expect(command?.helpInformation()).toContain('person to greet');
+        expect(command?.helpInformation()).toContain('enable debug');
+
+        await program.parseAsync(['hello'], { from: 'user' });
+
+        expect(received).toEqual({
+            args: { name: 'World' },
+            options: { debug: false },
+            container,
+        });
     });
 });

@@ -1,52 +1,60 @@
+import { getSchemaMeta } from '@axm-internal/zod-helpers';
 import type { Command } from 'commander';
-import { z } from 'zod';
+import { type ZodType, z } from 'zod';
 import {
     type RegisterCommandDefinitionParams,
     RegisterCommandDefinitionParamsSchema,
 } from './schemas/RegisterCommandDefinitionParamsSchema';
 
-type SchemaMeta = {
+type SchemaDetails = {
     description?: string;
     defaultValue?: unknown;
     isOptional: boolean;
-    baseSchema: z.ZodTypeAny;
+    baseSchema: ZodType;
 };
 
 const getObjectShape = (schema: z.ZodObject<z.ZodRawShape>) => {
-    const shape = (schema as unknown as { shape: z.ZodRawShape | (() => z.ZodRawShape) }).shape;
+    const { shape } = schema as unknown as { shape: z.ZodRawShape | (() => z.ZodRawShape) };
     return typeof shape === 'function' ? shape() : shape;
 };
 
-const getSchemaMeta = (schema: unknown): SchemaMeta => {
-    let current = schema as z.ZodTypeAny;
+type SchemaMeta = {
+    description?: string;
+    defaultValue?: unknown;
+};
+
+const getSchemaDetails = (schema: ZodType): SchemaDetails => {
+    let current = schema;
     let isOptional = false;
     let defaultValue: unknown;
-    let description: string | undefined =
-        (current as { description?: string }).description ??
-        (current as { def?: { description?: string } }).def?.description;
+    let meta = getSchemaMeta<SchemaMeta>(current);
 
-    const unwrapSchema = (value: z.ZodTypeAny) =>
-        (value as unknown as { unwrap: () => unknown }).unwrap() as z.ZodTypeAny;
+    const unwrapSchema = (value: ZodType) => (value as unknown as { unwrap: () => unknown }).unwrap() as ZodType;
 
     while (current instanceof z.ZodOptional || current instanceof z.ZodNullable) {
         isOptional = true;
         current = unwrapSchema(current);
+        if (!meta.description && meta.defaultValue === undefined) {
+            meta = getSchemaMeta<SchemaMeta>(current);
+        }
     }
 
     if (current instanceof z.ZodDefault) {
         isOptional = true;
-        const def = (current as unknown as { def?: { defaultValue?: unknown; innerType?: z.ZodTypeAny } }).def;
+        const { def } = current as z.ZodDefault<ZodType>;
         defaultValue = def?.defaultValue;
-        current = def?.innerType ?? unwrapSchema(current);
+        current = unwrapSchema(current);
+        if (!meta.description && meta.defaultValue === undefined) {
+            meta = getSchemaMeta<SchemaMeta>(current);
+        }
     }
 
-    if (!description) {
-        description =
-            (current as { description?: string }).description ??
-            (current as { def?: { description?: string } }).def?.description;
-    }
-
-    return { description, defaultValue, isOptional, baseSchema: current };
+    return {
+        description: meta.description,
+        defaultValue: meta.defaultValue ?? defaultValue,
+        isOptional,
+        baseSchema: current,
+    };
 };
 
 const toKebabCase = (value: string) =>
@@ -95,11 +103,11 @@ export const registerCommandDefinition = (options: RegisterCommandDefinitionPara
     if (definition.argsSchema) {
         const positions = getArgPositions(definition.argsSchema, definition.argPositions);
         for (const key of positions) {
-            const field = getObjectShape(definition.argsSchema)[key] as z.ZodTypeAny;
+            const field = getObjectShape(definition.argsSchema)[key] as ZodType;
             if (!field) {
                 throw new Error(`argPositions includes unknown key "${key}".`);
             }
-            const meta = getSchemaMeta(field);
+            const meta = getSchemaDetails(field);
             const argName = meta.isOptional ? `[${key}]` : `<${key}>`;
             cmd.argument(argName, meta.description, meta.defaultValue);
         }
@@ -107,7 +115,7 @@ export const registerCommandDefinition = (options: RegisterCommandDefinitionPara
 
     if (definition.optionsSchema) {
         for (const [key, field] of Object.entries(getObjectShape(definition.optionsSchema))) {
-            const meta = getSchemaMeta(field as z.ZodTypeAny);
+            const meta = getSchemaDetails(field as ZodType);
             const flag = `--${toKebabCase(key)}`;
             const isBoolean = meta.baseSchema instanceof z.ZodBoolean;
             const isNumber = meta.baseSchema instanceof z.ZodNumber;
@@ -158,8 +166,7 @@ export const registerCommandDefinition = (options: RegisterCommandDefinitionPara
         const commandArgs = stringArgs.length > 0 ? stringArgs : (command?.args ?? args.slice(0, -2));
         const options = command?.opts?.() ?? (args.at(-2) as Record<string, unknown>);
 
-        const argsSchema = definition.argsSchema;
-        const optionsSchema = definition.optionsSchema;
+        const { argsSchema, optionsSchema } = definition;
 
         const argPositions = argsSchema ? getArgPositions(argsSchema, definition.argPositions) : [];
         const argsObject = argPositions.length > 0 ? buildArgsObject(argPositions, commandArgs) : {};

@@ -42,11 +42,11 @@ const helloCommand = createCommandDefinition({
   name: 'hello',
   description: 'says hello',
   argsSchema: z.object({
-    name: z.string().describe('person to greet').default('World'),
+    name: z.string().meta({ description: 'person to greet' }).default('World'),
   }),
   argPositions: ['name'], // optional when there is only one argument
   optionsSchema: z.object({
-    debug: z.boolean().describe('enable debug').optional(),
+    debug: z.boolean().meta({ description: 'enable debug' }).optional(),
   }),
   action: async ({ args, options, container }) => {
     const { name } = args;

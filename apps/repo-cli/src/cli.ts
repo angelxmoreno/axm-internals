@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 import { CliApp } from '@axm-internal/cli-kit';
-import { checklistCommand } from './commands/checklistCommand';
-import { llmsCommand } from './commands/llmsCommand';
-import { typedocCommand } from './commands/typedocCommand';
+import { checklistCommand } from './commands/prompt-runners/checklistCommand';
+import { llmsCommand } from './commands/prompt-runners/llmsCommand';
+import { typedocCommand } from './commands/prompt-runners/typedocCommand';
 
 const cliApp = new CliApp({
     config: {

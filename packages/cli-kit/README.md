@@ -87,6 +87,10 @@ process.exit(exitCode);
 - Positional arguments are strings by default; use `z.coerce.*` when you need numeric or boolean args.
 - Avoid Zod function defaults for CLI arguments/options; Commander treats functions as parsers.
 
+## Breaking Changes
+
+- Defaults are no longer inferred from `schema.default(...)` unless you also provide `meta({ defaultValue })`. Use `schema.meta({ defaultValue })` to keep Commander defaults and help text in sync.
+
 ## Docs
 
 Generated documentation lives in `docs/` and can be updated with:

@@ -30,24 +30,28 @@ export const queryCommand = createCommandDefinition({
             limit: z.number().int().meta({ description: 'Limit results.' }).optional(),
             offset: z.number().int().meta({ description: 'Offset results.' }).optional(),
         })
-        .refine(
-            (value) =>
-                Boolean(
-                    value.message ||
-                        value.authorSearch ||
-                        value.path ||
-                        value.package ||
-                        value.author ||
-                        value.between ||
-                        value.listCommits ||
-                        value.listFiles ||
-                        value.listAuthors
-                ),
-            { message: 'Provide at least one query option.' }
-        ),
+        .refine(() => true),
     action: async ({ options }) => {
         const db = await openBunDb(options.db);
         try {
+            const hasFilters = Boolean(
+                options.message ||
+                    options.authorSearch ||
+                    options.path ||
+                    options.package ||
+                    options.author ||
+                    options.between ||
+                    options.listCommits ||
+                    options.listFiles ||
+                    options.listAuthors
+            );
+
+            if (!hasFilters) {
+                const commits = await listCommits(db, { limit: options.limit, offset: options.offset });
+                console.log(JSON.stringify(commits, null, 2));
+                return;
+            }
+
             if (options.message) {
                 const commits = await findCommitsByMessage(db, options.message);
                 console.log(JSON.stringify(commits, null, 2));

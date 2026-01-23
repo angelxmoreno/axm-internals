@@ -19,9 +19,11 @@ describe('readCommits', () => {
     });
 
     it('skips merge commits by default', async () => {
-        const commits = await readCommits({ limit: 50 });
-        const hasMergeMessage = commits.some((commit) => commit.message.startsWith('Merge '));
-        expect(hasMergeMessage).toBe(false);
+        const [defaultCommits, explicitNoMerges] = await Promise.all([
+            readCommits({ limit: 50 }),
+            readCommits({ includeMerges: false, limit: 50 }),
+        ]);
+        expect(defaultCommits).toEqual(explicitNoMerges);
     });
 
     it('includes merge commits when enabled', async () => {

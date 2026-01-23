@@ -8,7 +8,9 @@ Purpose:
 Public surface:
 - `openNodeDb`, `openBunDb`, `openBunWorkerDb`
 - `findCommitsByMessage`, `findCommitsBetween`, `findCommitsByAuthorEmail`
-- `findCommitsByPath`, `findCommitsByPackage`, `findAuthors`
+- `findCommitsByType`, `findCommitsByScope`
+- `listCommits`, `findCommitsByPath`, `findCommitsByPackage`
+- `findAuthors`, `listAuthors`, `listFiles`, `listMeta`
 - Types: `DbClient`, `RepoIndexState`, `Author`, `Commit`, `CommitFile`, `MetaEntry`
 - CLI: `git-db init`, `git-db update`, `git-db query`
 

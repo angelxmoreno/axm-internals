@@ -20,10 +20,16 @@ describe('data renderers', () => {
                 message: 'feat: hello',
                 body: '',
                 refs: 'origin/main',
+                type: 'feat',
+                scope: 'git-db',
+                is_breaking_change: true,
             },
         ];
         const output = renderCommits(commits);
         expect(output).toContain('Hash');
+        expect(output).toContain('Type');
+        expect(output).toContain('Scope');
+        expect(output).toContain('Breaking');
         expect(output).toContain('abcdef1234567890'.slice(0, 16));
         expect(output).toContain('feat: hello');
     });

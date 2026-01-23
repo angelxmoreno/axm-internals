@@ -20,6 +20,9 @@ export interface CommitsTable {
     message: string;
     body: string;
     refs: string | null;
+    type: string | null;
+    scope: string | null;
+    is_breaking_change: boolean | null;
 }
 
 export interface CommitFilesTable {

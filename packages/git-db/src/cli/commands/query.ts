@@ -6,6 +6,8 @@ import {
     findCommitsBetween,
     findCommitsByAuthorEmail,
     findCommitsByMessage,
+    findCommitsByScope,
+    findCommitsByType,
     listCommits,
 } from '../../queries/commitQueries';
 import { findCommitsByPath, listFiles } from '../../queries/fileQueries';
@@ -21,6 +23,8 @@ export const queryCommand = createCommandDefinition({
         .object({
             db: DBPathSchema,
             message: z.string().meta({ description: 'Search commit messages.' }).optional(),
+            type: z.string().meta({ description: 'Search by conventional commit type.' }).optional(),
+            scope: z.string().meta({ description: 'Search by conventional commit scope.' }).optional(),
             authorSearch: z.string().meta({ description: 'Search authors by name/email.' }).optional(),
             path: z.string().meta({ description: 'Search by path prefix.' }).optional(),
             package: z.string().meta({ description: 'Search by package path.' }).optional(),
@@ -40,6 +44,8 @@ export const queryCommand = createCommandDefinition({
         try {
             const hasFilters = Boolean(
                 options.message ||
+                    options.type ||
+                    options.scope ||
                     options.authorSearch ||
                     options.path ||
                     options.package ||
@@ -60,6 +66,20 @@ export const queryCommand = createCommandDefinition({
 
             if (options.message) {
                 const commits = await findCommitsByMessage(db, options.message);
+                const data = options.json ? renderJson(commits) : renderCommits(commits);
+                console.log(data);
+                return;
+            }
+
+            if (options.type) {
+                const commits = await findCommitsByType(db, options.type);
+                const data = options.json ? renderJson(commits) : renderCommits(commits);
+                console.log(data);
+                return;
+            }
+
+            if (options.scope) {
+                const commits = await findCommitsByScope(db, options.scope);
                 const data = options.json ? renderJson(commits) : renderCommits(commits);
                 console.log(data);
                 return;

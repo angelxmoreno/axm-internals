@@ -71,6 +71,9 @@ Tables:
   - `message`
   - `body`
   - `refs` (nullable)
+  - `type` (nullable, parsed from conventional commits)
+  - `scope` (nullable, parsed from conventional commits)
+  - `is_breaking_change` (nullable, true when `!` is present)
 - `commit_files`
   - `hash` (foreign key to commits.hash)
   - `path`
@@ -83,6 +86,8 @@ Indexes:
 - `authors(email)`
 - `commits(date)`
 - `commits(message)`
+- `commits(type)`
+- `commits(scope)`
 - `commit_files(path)`
 - `commit_files(hash)`
 
@@ -145,6 +150,8 @@ export const updateIndex: (db: DbClient) => RepoIndexState;
 
 // queries
 export const findCommitsByMessage: (db: DbClient, query: string) => CommitLog[];
+export const findCommitsByType: (db: DbClient, type: string) => CommitLog[];
+export const findCommitsByScope: (db: DbClient, scope: string) => CommitLog[];
 export const findCommitsByPath: (db: DbClient, pathPrefix: string) => CommitLog[];
 export const findCommitsBetween: (db: DbClient, fromHash: string, toHash: string) => CommitLog[];
 export const findCommitsByAuthorEmail: (db: DbClient, email: string) => CommitLog[];
@@ -157,7 +164,7 @@ export const findAuthors: (db: DbClient, query: string) => Author[];
 - Planned commands:
   - `git-db init` -> create DB + schema
   - `git-db update` -> incremental update
-  - `git-db query` -> ad-hoc query (message/path)
+  - `git-db query` -> ad-hoc query (message/path/type/scope)
 
 ## Implementation Plan
 

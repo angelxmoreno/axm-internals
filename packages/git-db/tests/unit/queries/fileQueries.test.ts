@@ -20,6 +20,9 @@ describe('file queries', () => {
                         message: 'feat: first',
                         body: '',
                         refs: null,
+                        type: 'feat',
+                        scope: null,
+                        is_breaking_change: false,
                     },
                     {
                         hash: 'b2',
@@ -28,6 +31,9 @@ describe('file queries', () => {
                         message: 'fix: second',
                         body: '',
                         refs: null,
+                        type: 'fix',
+                        scope: null,
+                        is_breaking_change: false,
                     },
                 ],
                 files: [

@@ -37,14 +37,17 @@ const db = await openBunWorkerDb('.git-db/database.sqlite');
 ## Query usage
 
 ```ts
-import { findCommitsByMessage, openNodeDb } from '@axm-internal/git-db';
+import { findCommitsByScope, findCommitsByType, findCommitsByMessage, openNodeDb } from '@axm-internal/git-db';
 
 const db = await openNodeDb('.git-db/database.sqlite');
 const commits = await findCommitsByMessage(db, 'feat');
+const features = await findCommitsByType(db, 'feat');
+const cliKitWork = await findCommitsByScope(db, 'cli-kit');
 ```
 
 Conventional commits note:
-- The package name inside `feat(scope): ...` is the **scope**. Use the same scope text when doing message-based queries for a package.
+- git-db best-effort parses conventional commit messages and stores `type`, `scope`, and `is_breaking_change` in the commits table (nullable when parsing fails).
+- The package name inside `feat(scope): ...` is the **scope**. Prefer scope queries when you follow this convention.
 - Example: if commits are written as `feat(cli-kit): add meta helpers`, then `cli-kit` is the scope to search for.
 
 ## CLI
@@ -53,6 +56,8 @@ Conventional commits note:
 git-db init --db .git-db/database.sqlite
 git-db update --db .git-db/database.sqlite
 git-db query --db .git-db/database.sqlite --message feat
+git-db query --db .git-db/database.sqlite --type feat
+git-db query --db .git-db/database.sqlite --scope cli-kit
 git-db query --db .git-db/database.sqlite --author-search alice
 git-db query --db .git-db/database.sqlite --list-commits --limit 25
 git-db query --db .git-db/database.sqlite --list-files --limit 50

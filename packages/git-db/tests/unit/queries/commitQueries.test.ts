@@ -7,6 +7,8 @@ import {
     findCommitsBetween,
     findCommitsByAuthorEmail,
     findCommitsByMessage,
+    findCommitsByScope,
+    findCommitsByType,
     listCommits,
 } from '../../../src/queries/commitQueries';
 
@@ -29,14 +31,20 @@ describe('commit queries', () => {
                         message: 'feat: first',
                         body: '',
                         refs: null,
+                        type: 'feat',
+                        scope: null,
+                        is_breaking_change: false,
                     },
                     {
                         hash: 'b2',
                         author_id: 'bob@example.com',
                         date: '2026-01-02T00:00:00.000Z',
-                        message: 'fix: second',
+                        message: 'fix(core): second',
                         body: '',
                         refs: null,
+                        type: 'fix',
+                        scope: 'core',
+                        is_breaking_change: false,
                     },
                     {
                         hash: 'c3',
@@ -45,6 +53,9 @@ describe('commit queries', () => {
                         message: 'chore: third',
                         body: '',
                         refs: null,
+                        type: 'chore',
+                        scope: null,
+                        is_breaking_change: false,
                     },
                 ],
                 files: [
@@ -60,6 +71,14 @@ describe('commit queries', () => {
 
             const byAuthor = await findCommitsByAuthorEmail(db, 'alice@example.com');
             expect(byAuthor.length).toBe(2);
+
+            const byType = await findCommitsByType(db, 'fix');
+            expect(byType.length).toBe(1);
+            expect(byType[0]?.hash).toBe('b2');
+
+            const byScope = await findCommitsByScope(db, 'core');
+            expect(byScope.length).toBe(1);
+            expect(byScope[0]?.hash).toBe('b2');
 
             const between = await findCommitsBetween(db, 'a1', 'b2');
             expect(between.length).toBe(2);

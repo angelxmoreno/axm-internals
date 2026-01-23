@@ -27,6 +27,9 @@ export const findCommitsByPath = async (db: DbClient, pathPrefix: string): Promi
             'commits.message',
             'commits.body',
             'commits.refs',
+            'commits.type',
+            'commits.scope',
+            'commits.is_breaking_change',
         ])
         .where('commit_files.path', 'like', `${pathPrefix}%`)
         .orderBy('commits.date', 'desc')

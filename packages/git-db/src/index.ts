@@ -6,6 +6,8 @@ export {
     findCommitsBetween,
     findCommitsByAuthorEmail,
     findCommitsByMessage,
+    findCommitsByScope,
+    findCommitsByType,
     listCommits,
 } from './queries/commitQueries';
 export { findCommitsByPath, listFiles } from './queries/fileQueries';

@@ -2,6 +2,7 @@ import type { DbClient } from '../db/client';
 import { getIndexState, setIndexState } from '../db/client';
 import { readCommitFiles } from '../git/files';
 import { readCommits } from '../git/log';
+import { parseConventionalCommit } from '../utils/parseConventionalCommit';
 import { indexCommitBatch } from './commitIndexer';
 import type { CommitIndexBatch, CommitScanOptions, CommitScanResult } from './types';
 
@@ -45,6 +46,7 @@ export const scanCommits = async (db: DbClient, opts: CommitScanOptions = {}): P
             });
         }
 
+        const conventional = parseConventionalCommit(commit.message);
         commitRows.push({
             hash: commit.hash,
             author_id: authorId,
@@ -52,6 +54,9 @@ export const scanCommits = async (db: DbClient, opts: CommitScanOptions = {}): P
             message: commit.message,
             body: commit.body,
             refs: commit.refs,
+            type: conventional.type,
+            scope: conventional.scope,
+            is_breaking_change: conventional.isBreakingChange,
         });
     }
 

@@ -20,7 +20,9 @@ export const renderCommits = (objs: Commit[]): string =>
         columns: {
             Hash: (row) => truncateString(row.hash, 16),
             Author: 'author_id',
-            Ref: (row) => row.refs?.split(', ').join('\n') ?? '',
+            Type: (row) => row.type ?? '',
+            Scope: (row) => row.scope ?? '',
+            Breaking: (row) => (row.is_breaking_change === null ? '' : row.is_breaking_change ? 'yes' : 'no'),
             Message: (row) => truncateString(row.message),
             Date: (row) => row.date.toString(),
         },

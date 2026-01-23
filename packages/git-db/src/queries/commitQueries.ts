@@ -54,8 +54,19 @@ export const findCommitsByAuthorEmail = async (db: DbClient, email: string): Pro
             'commits.message',
             'commits.body',
             'commits.refs',
+            'commits.type',
+            'commits.scope',
+            'commits.is_breaking_change',
         ])
         .where('authors.email', '=', email)
         .orderBy('commits.date', 'desc')
         .execute();
+};
+
+export const findCommitsByType = async (db: DbClient, type: string): Promise<Commit[]> => {
+    return db.selectFrom('commits').selectAll().where('type', '=', type).orderBy('date', 'desc').execute();
+};
+
+export const findCommitsByScope = async (db: DbClient, scope: string): Promise<Commit[]> => {
+    return db.selectFrom('commits').selectAll().where('scope', '=', scope).orderBy('date', 'desc').execute();
 };

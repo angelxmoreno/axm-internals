@@ -25,6 +25,9 @@ describe('indexCommitBatch', () => {
                         message: 'feat: initial commit',
                         body: '',
                         refs: null,
+                        type: 'feat',
+                        scope: null,
+                        is_breaking_change: false,
                     },
                 ],
                 files: [

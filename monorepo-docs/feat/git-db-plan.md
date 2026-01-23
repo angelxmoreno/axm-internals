@@ -211,7 +211,7 @@ export const findAuthors: (db: DbClient, query: string) => Author[];
    - Files:
      - `packages/git-db/src/indexer/commitIndexer.ts`
      - `packages/git-db/src/indexer/commitScanner.ts`
-     - `packages/git-db/src/db/client.ts` (insert helpers)
+     - `packages/git-db/src/db/client.ts` (index state helpers)
      - `packages/git-db/src/index.ts` (export indexer)
    - Tests:
      - `packages/git-db/tests/unit/indexer/commitIndexer.test.ts`

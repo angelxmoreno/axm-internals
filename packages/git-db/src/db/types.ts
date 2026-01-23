@@ -1,4 +1,4 @@
-import type { Generated, Insertable, Selectable, Updateable } from 'kysely';
+import type { Insertable, Selectable, Updateable } from 'kysely';
 
 export interface Database {
     authors: AuthorsTable;
@@ -8,7 +8,7 @@ export interface Database {
 }
 
 export interface AuthorsTable {
-    id: Generated<string>;
+    id: string;
     name: string;
     email: string;
 }

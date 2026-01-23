@@ -258,4 +258,5 @@ export const findAuthors: (db: DbClient, query: string) => Author[];
      - `packages/git-db/tests/unit/cli/query.test.ts`
    - Commit message: `feat(git-db): added cli commands`
 
-Default DB location: `.git/git-db.sqlite` with optional override path.
+Default DB location: `.git-db/database.sqlite` with optional override path.
+- Parent directories for the DB path are created automatically.

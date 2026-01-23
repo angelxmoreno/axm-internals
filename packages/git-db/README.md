@@ -15,7 +15,7 @@ bun add @axm-internal/git-db
 ```ts
 import { openNodeDb } from '@axm-internal/git-db';
 
-const db = await openNodeDb('.git/git-db.sqlite');
+const db = await openNodeDb('.git-db/database.sqlite');
 ```
 
 ### Bun
@@ -23,7 +23,7 @@ const db = await openNodeDb('.git/git-db.sqlite');
 ```ts
 import { openBunDb } from '@axm-internal/git-db';
 
-const db = await openBunDb('.git/git-db.sqlite');
+const db = await openBunDb('.git-db/database.sqlite');
 ```
 
 ### Bun (worker)
@@ -31,7 +31,7 @@ const db = await openBunDb('.git/git-db.sqlite');
 ```ts
 import { openBunWorkerDb } from '@axm-internal/git-db';
 
-const db = await openBunWorkerDb('.git/git-db.sqlite');
+const db = await openBunWorkerDb('.git-db/database.sqlite');
 ```
 
 ## Query usage
@@ -39,7 +39,7 @@ const db = await openBunWorkerDb('.git/git-db.sqlite');
 ```ts
 import { findCommitsByMessage, openNodeDb } from '@axm-internal/git-db';
 
-const db = await openNodeDb('.git/git-db.sqlite');
+const db = await openNodeDb('.git-db/database.sqlite');
 const commits = await findCommitsByMessage(db, 'feat');
 ```
 
@@ -50,13 +50,14 @@ Conventional commits note:
 ## CLI
 
 ```bash
-git-db init --db .git/git-db.sqlite
-git-db update --db .git/git-db.sqlite
-git-db query --db .git/git-db.sqlite --message feat
+git-db init --db .git-db/database.sqlite
+git-db update --db .git-db/database.sqlite
+git-db query --db .git-db/database.sqlite --message feat
 ```
 
 ## Notes
 
 - Source-first, buildless package (Bun).
 - Entry point: `src/index.ts`.
+- Parent directories for the DB path are created automatically.
 - Indexing APIs are currently internal; the public surface focuses on opening the DB and querying indexed data.

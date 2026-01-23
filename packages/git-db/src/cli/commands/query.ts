@@ -9,13 +9,14 @@ import {
 } from '../../queries/commitQueries';
 import { findCommitsByPath } from '../../queries/fileQueries';
 import { findCommitsByPackage } from '../../queries/packageQueries';
+import { DBPathSchema } from '../schemas';
 
 export const queryCommand = createCommandDefinition({
     name: 'query',
     description: 'Query indexed commits.',
     optionsSchema: z
         .object({
-            db: z.string().meta({ description: 'Path to the SQLite db file.' }).default('.git/git-db.sqlite'),
+            db: DBPathSchema,
             message: z.string().meta({ description: 'Search commit messages.' }).optional(),
             path: z.string().meta({ description: 'Search by path prefix.' }).optional(),
             package: z.string().meta({ description: 'Search by package path.' }).optional(),

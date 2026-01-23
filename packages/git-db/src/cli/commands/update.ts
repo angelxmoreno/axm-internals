@@ -2,12 +2,13 @@ import { createCommandDefinition } from '@axm-internal/cli-kit';
 import { z } from 'zod';
 import { openBunDb } from '../../db/client';
 import { scanCommits } from '../../indexer/commitScanner';
+import { DBPathSchema } from '../schemas';
 
 export const updateCommand = createCommandDefinition({
     name: 'update',
     description: 'Scan git history and update the index.',
     optionsSchema: z.object({
-        db: z.string().meta({ description: 'Path to the SQLite db file.' }).default('.git/git-db.sqlite'),
+        db: DBPathSchema,
         includeMerges: z.boolean().meta({ description: 'Include merge commits.' }).default(false),
         limit: z.number().int().meta({ description: 'Max commits to index.' }).optional(),
         skip: z.number().int().meta({ description: 'Skip N commits.' }).optional(),

@@ -10,9 +10,11 @@ Public surface:
 - `findCommitsByMessage`, `findCommitsBetween`, `findCommitsByAuthorEmail`
 - `findCommitsByPath`, `findCommitsByPackage`, `findAuthors`
 - Types: `DbClient`, `RepoIndexState`, `Author`, `Commit`, `CommitFile`, `MetaEntry`
+- CLI: `git-db init`, `git-db update`, `git-db query`
 
 Intended usage:
 - Internal tooling that needs fast commit/path queries over a cached git index.
+- CLI for initializing, updating, and querying the index.
 
 Non-goals:
 - Running git commands on every query.

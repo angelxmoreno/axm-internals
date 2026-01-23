@@ -151,9 +151,9 @@ export const findCommitsByAuthorEmail: (db: DbClient, email: string) => CommitLo
 export const findAuthors: (db: DbClient, query: string) => Author[];
 ```
 
-## CLI Commands (v2)
+## CLI Commands (v1)
 
-- CLI is needed, but not part of v1.
+- CLI is included in v1.
 - Planned commands:
   - `git-db init` -> create DB + schema
   - `git-db update` -> incremental update
@@ -243,5 +243,19 @@ export const findAuthors: (db: DbClient, query: string) => Author[];
      - `packages/git-db/README.md`
      - `packages/git-db/llms.txt`
    - Commit message: `docs(git-db): documented usage and API surface`
+
+8) **CLI**
+   - Goal: Provide a minimal CLI for init, update, and query.
+   - Files:
+     - `packages/git-db/src/cli/index.ts`
+     - `packages/git-db/src/cli/commands/init.ts`
+     - `packages/git-db/src/cli/commands/update.ts`
+     - `packages/git-db/src/cli/commands/query.ts`
+     - `packages/git-db/src/index.ts` (export CLI entry if needed)
+   - Tests:
+     - `packages/git-db/tests/unit/cli/init.test.ts`
+     - `packages/git-db/tests/unit/cli/update.test.ts`
+     - `packages/git-db/tests/unit/cli/query.test.ts`
+   - Commit message: `feat(git-db): added cli commands`
 
 Default DB location: `.git/git-db.sqlite` with optional override path.

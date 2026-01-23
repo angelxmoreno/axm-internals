@@ -43,6 +43,18 @@ const db = await openNodeDb('.git/git-db.sqlite');
 const commits = await findCommitsByMessage(db, 'feat');
 ```
 
+Conventional commits note:
+- The package name inside `feat(scope): ...` is the **scope**. Use the same scope text when doing message-based queries for a package.
+- Example: if commits are written as `feat(cli-kit): add meta helpers`, then `cli-kit` is the scope to search for.
+
+## CLI
+
+```bash
+git-db init --db .git/git-db.sqlite
+git-db update --db .git/git-db.sqlite
+git-db query --db .git/git-db.sqlite --message feat
+```
+
 ## Notes
 
 - Source-first, buildless package (Bun).

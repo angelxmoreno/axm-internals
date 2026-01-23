@@ -77,8 +77,10 @@
       "name": "@axm-internal/git-db",
       "version": "0.1.0",
       "dependencies": {
+        "@axm-internal/cli-kit": "*",
         "execa": "^9.6.1",
         "kysely": "^0.28.10",
+        "zod": "^4.3.5",
       },
       "devDependencies": {
         "@axm-internal/tooling-config": "*",

@@ -16,11 +16,23 @@
         "docs": "typedoc",
         "validate": "echo \"Validated\""
     },
+    "dependencies": {
+        "kysely": "^0.28.10"
+    },
     "devDependencies": {
         "@axm-internal/tooling-config": "*",
         "typedoc": "^0.28.2",
         "typedoc-plugin-markdown": "^4.8.1",
         "typescript": "^5",
-        "@types/bun": "^1.3"
+        "@types/bun": "^1.3",
+        "@types/better-sqlite3": "^7.6.12",
+        "@meck93/kysely-bun-sqlite": "^0.2.0",
+        "better-sqlite3": "^12.6.2",
+        "kysely-bun-worker": "^1.2.1"
+    },
+    "optionalDependencies": {
+        "@meck93/kysely-bun-sqlite": "^0.2.0",
+        "better-sqlite3": "^12.6.2",
+        "kysely-bun-worker": "^1.2.1"
     }
 }

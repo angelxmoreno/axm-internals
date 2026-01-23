@@ -34,7 +34,7 @@ packages/git-db/
     db/
       client.ts
       migrations.ts
-      schema.sql
+      schema.ts
     git/
       log.ts
       diff.ts
@@ -173,12 +173,18 @@ export const findAuthors: (db: DbClient, query: string) => Author[];
    - Commit message: `chore(git-db): scaffolded package structure`
 
 2) **Define DB schema + migration**
-   - Goal: Provide the SQLite schema and a migration/init entry point.
+   - Goal: Define schema with Kysely's schema builder and provide init helpers.
    - Files:
-     - `packages/git-db/src/db/schema.sql`
+     - `packages/git-db/src/db/database.ts`
+     - `packages/git-db/src/db/database-node.ts`
+     - `packages/git-db/src/db/database-bun.ts`
+     - `packages/git-db/src/db/database-bun-worker.ts`
+     - `packages/git-db/src/db/schema.ts`
      - `packages/git-db/src/db/migrations.ts`
      - `packages/git-db/src/db/client.ts`
      - `packages/git-db/src/index.ts` (export init/open helpers)
+   - Notes:
+     - Bun factory uses `@meck93/kysely-bun-sqlite`.
    - Tests:
      - `packages/git-db/tests/unit/db/migrations.test.ts`
      - `packages/git-db/tests/unit/db/client.test.ts`
@@ -239,5 +245,3 @@ export const findAuthors: (db: DbClient, query: string) => Author[];
    - Commit message: `docs(git-db): documented usage and API surface`
 
 Default DB location: `.git/git-db.sqlite` with optional override path.
-- Should indexing include merge commits or skip them by default?
-- Do we want file status tracking (A/M/D/R) in v1?

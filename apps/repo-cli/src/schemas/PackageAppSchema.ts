@@ -1,41 +1,34 @@
 import { z } from 'zod';
 
-const validPackageApps = {
-    apps: ['repo-cli'],
-    packages: ['cli-kit', 'config-schema', 'hono-kit', 'tooling-config', 'zod-helpers'],
-};
+const validPackageApps = [
+    'apps/repo-cli',
+    'packages/cli-kit',
+    'packages/config-schema',
+    'packages/hono-kit',
+    'packages/tooling-config',
+    'packages/zod-helpers',
+] as const;
+
+const validPackageAppSet = new Set<string>(validPackageApps);
 
 export const ValidatePackageApp = (packageApp?: string): true => {
     if (!packageApp) {
         throw new Error('Package or app name is required');
     }
 
-    if (!packageApp.startsWith('apps/') && !packageApp.startsWith('packages/')) {
-        throw new Error('Package or app name must start with "apps/" or "packages/".');
-    }
-
-    const [type, name] = packageApp.split('/', 2);
-
-    if (!type || !name) {
-        throw new Error('Invalid package or app name.');
-    }
-
-    const allowed = validPackageApps[type as keyof typeof validPackageApps];
-    if (!allowed?.includes(name)) {
-        throw new Error(`Unknown ${type.slice(0, -1)} name "${name}".`);
+    if (!validPackageAppSet.has(packageApp)) {
+        throw new Error(`Unknown package or app "${packageApp}".`);
     }
 
     return true;
 };
 
 export const isValidPackageApp = (packageApp?: string): boolean => {
-    try {
-        return ValidatePackageApp(packageApp);
-    } catch (_e) {
-        return false;
-    }
+    return Boolean(packageApp && validPackageAppSet.has(packageApp));
 };
 
-export const PackageAppSchema = z.string().refine((value) => isValidPackageApp(value), {
-    message: `Expected "apps/<name>" or "packages/<name>" for a known app/package.`,
+export const PackageAppSchema = z.enum(validPackageApps, {
+    error: () => 'Expected a known "apps/<name>" or "packages/<name>" value.',
 });
+
+export type PackageApp = z.infer<typeof PackageAppSchema>;

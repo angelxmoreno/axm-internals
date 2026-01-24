@@ -26,7 +26,7 @@ describe('requirePackagePath', () => {
 
         try {
             expect(() => requirePackagePath('packages/temp-not-allowed')).toThrow(
-                'Unknown package name "temp-not-allowed".'
+                'Unknown package or app "packages/temp-not-allowed".'
             );
         } finally {
             fs.rmSync(tempDir, { recursive: true, force: true });

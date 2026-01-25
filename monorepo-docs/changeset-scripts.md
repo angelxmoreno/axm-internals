@@ -102,6 +102,21 @@ Inputs:
 Output:
 - List of packages and tags (e.g., `@axm-internal/cli-kit@0.1.0`).
 
+### 5) `changeset:create`
+
+Purpose:
+- Create changesets from git-db commit history.
+
+Inputs:
+- Package path (e.g., `packages/cli-kit`) or `--all` for all packages.
+- Optional `--dry` to preview the changeset content without writing files.
+
+Output:
+- One changeset per target package, derived from commits between the latest tag and the latest commit for the scope.
+
+Notes:
+- Uses `PackageInfoService` to gather last tag, tag commit, latest commit, and scoped commit lists.
+
 ## Workflow Implications
 
 Short-term (manual):

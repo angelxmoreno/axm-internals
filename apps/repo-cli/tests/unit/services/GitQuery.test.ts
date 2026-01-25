@@ -78,7 +78,7 @@ mock.module('@axm-internal/git-db', () => ({
     }),
 }));
 
-const { GitQuery } = await import('../../../services/GitQuery');
+const { GitQuery } = await import('../../../src/services/GitQuery');
 
 describe('GitQuery', () => {
     beforeEach(() => {

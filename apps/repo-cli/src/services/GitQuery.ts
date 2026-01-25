@@ -9,7 +9,7 @@ import {
     scanCommits,
 } from '@axm-internal/git-db';
 import { execa } from 'execa';
-import { findRepoRoot } from '../src/utils/findRepoRoot';
+import { findRepoRoot } from '../utils/findRepoRoot';
 
 /**
  * Build the default git-db path for the current repo.

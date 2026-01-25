@@ -294,13 +294,17 @@ export class GitQuery {
      * ```
      */
     async getCommitForTag(tag: string): Promise<Commit | null> {
-        const { stdout } = await execa('git', ['rev-list', '-n', '1', tag]);
-        const hash = stdout.trim();
-        if (!hash) {
+        try {
+            const { stdout } = await execa('git', ['rev-list', '-n', '1', tag]);
+            const hash = stdout.trim();
+            if (!hash) {
+                return null;
+            }
+
+            return this.getCommitByHash(hash);
+        } catch {
             return null;
         }
-
-        return this.getCommitByHash(hash);
     }
 
     /**

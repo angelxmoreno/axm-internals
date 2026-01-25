@@ -141,6 +141,10 @@ Typical flow:
 - Verify scripts/commands exist and work (check `package.json`, `node_modules/.bin`, or run the command) before recommending them.
 - Prefer confirming over assuming when tools, CLIs, or workflows are involved.
 
+## TypeScript Class Visibility
+
+- Do not create `private` class properties or methods in TypeScript. Use `protected` instead.
+
 ## Quality & Review Pipeline
 
 Four-layer model:

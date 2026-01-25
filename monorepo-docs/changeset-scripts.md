@@ -42,6 +42,7 @@ These scripts are intended to be implemented in `apps/repo-cli`. Names are sugge
 - Provide transparent release input data (explicit commit lists and boundaries for auditing).
 - Preserve tag naming format (`@axm-internal/<name>@x.y.z`).
 - Support a single release PR that aggregates changelog/changeset updates across packages.
+- Generate changeset drafts using PackageInfoService data (latest tag, tag commit, latest commit, scoped commit list).
 
 ### 1) `gitdb:index`
 
@@ -49,8 +50,7 @@ Purpose:
 - Initialize or update the git-db SQLite index for the repo (init if missing).
 
 Inputs:
-- Optional `--full` to force a full re-index.
-- Optional `--include-merges` flag.
+- None.
 
 Output:
 - Indexed commits, files, authors, and metadata stored in git-db.
@@ -101,6 +101,21 @@ Inputs:
 
 Output:
 - List of packages and tags (e.g., `@axm-internal/cli-kit@0.1.0`).
+
+### 5) `changeset:create`
+
+Purpose:
+- Create changesets from git-db commit history.
+
+Inputs:
+- Package path (e.g., `packages/cli-kit`) or `--all` for all packages.
+- Optional `--dry` to preview the changeset content without writing files.
+
+Output:
+- One changeset per target package, derived from commits between the latest tag and the latest commit for the scope.
+
+Notes:
+- Uses `PackageInfoService` to gather last tag, tag commit, latest commit, and scoped commit lists.
 
 ## Workflow Implications
 

@@ -73,6 +73,6 @@ When `--json` is omitted, results are rendered as tables using `cli-table3`.
 - Source-first, buildless package (Bun).
 - Entry point: `src/index.ts`.
 - Parent directories for the DB path are created automatically.
-- Indexing APIs are currently internal; the public surface focuses on opening the DB and querying indexed data.
+- Indexing APIs (`scanCommits`) are part of the public surface for advanced workflows; they may change in pre-1.0 releases.
 - Message searches escape `%` and `_` by default, so literal matches are returned (wildcards are not supported in search input).
 - `commit_files` uses a composite primary key on `(hash, path)` to prevent duplicate entries.

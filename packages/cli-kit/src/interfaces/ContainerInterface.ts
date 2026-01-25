@@ -10,7 +10,9 @@ import { z } from 'zod';
  * const token: InjectionToken = 'MyService';
  * ```
  */
-export type InjectionToken<T = unknown> = (new (...args: unknown[]) => T) | string | symbol;
+
+// biome-ignore lint/suspicious/noExplicitAny: we do not know the args for the class constructor
+export type InjectionToken<T = unknown> = (new (...args: any[]) => T) | string | symbol;
 
 /**
  * Zod schema that validates container injection tokens.

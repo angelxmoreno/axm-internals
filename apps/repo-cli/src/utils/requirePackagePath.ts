@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { ValidatePackageApp } from '../schemas/PackageAppSchema';
 import type { PackageGuardResult } from '../types';
 import { findRepoRoot } from './findRepoRoot';
 
@@ -35,6 +36,9 @@ export const requirePackagePath = (packagePath?: string): PackageGuardResult => 
     if (topLevelDir !== 'packages' && topLevelDir !== 'apps') {
         throw new Error('Package path must start with "packages/" or "apps/".');
     }
+
+    const normalizedRelative = relativePath.split(path.sep).join('/');
+    ValidatePackageApp(normalizedRelative);
 
     return {
         packageName: packagePath,

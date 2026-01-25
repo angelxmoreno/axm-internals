@@ -1,6 +1,6 @@
 import { createCommandDefinition } from '@axm-internal/cli-kit';
 import { z } from 'zod';
-import { runPackagePrompt } from '../utils/runPackagePrompt';
+import { runPackagePrompt } from '../../utils/runPackagePrompt';
 
 export const llmsCommand = createCommandDefinition({
     name: 'prompt:llms',

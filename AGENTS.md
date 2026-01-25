@@ -136,6 +136,11 @@ Typical flow:
 
 - Use past tense for commit messages (e.g., "Added tests", "Refactored CLI metadata").
 
+## Verification Before Advice
+
+- Verify scripts/commands exist and work (check `package.json`, `node_modules/.bin`, or run the command) before recommending them.
+- Prefer confirming over assuming when tools, CLIs, or workflows are involved.
+
 ## Quality & Review Pipeline
 
 Four-layer model:

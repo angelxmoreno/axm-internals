@@ -1,8 +1,6 @@
 #!/usr/bin/env bun
 import { CliApp } from '@axm-internal/cli-kit';
-import { checklistCommand } from './commands/checklistCommand';
-import { llmsCommand } from './commands/llmsCommand';
-import { typedocCommand } from './commands/typedocCommand';
+import { promptRunnerCommands } from './commands/prompt-runners';
 
 const cliApp = new CliApp({
     config: {
@@ -12,7 +10,7 @@ const cliApp = new CliApp({
     },
     options: {
         pretty: true,
-        commandDefinitions: [checklistCommand, llmsCommand, typedocCommand],
+        commandDefinitions: [...promptRunnerCommands],
     },
 });
 const exitCode = await cliApp.start();

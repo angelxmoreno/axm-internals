@@ -9,7 +9,8 @@ Public surface:
 - Database openers: `openNodeDb`, `openBunDb`, `openBunWorkerDb`.
 - Commit queries: `findCommitsBetween`, `findCommitsByAuthorEmail`, `findCommitsByMessage`, `findCommitsByScope`, `findCommitsByType`, `findCommitsByPackage`.
 - File and metadata queries: `findCommitsByPath`, `findAuthors`, `listCommits`, `listFiles`, `listAuthors`, `listMeta`.
-- Types: `DbClient`, `RepoIndexState`, `Author`, `Commit`, `CommitFile`, `MetaEntry`.
+- Indexing: `scanCommits`.
+- Types: `DbClient`, `RepoIndexState`, `Author`, `Commit`, `CommitFile`, `MetaEntry`, `CommitScanResult`.
 
 Intended usage:
 - Open an existing `.sqlite` git-db file in Node or Bun, then query commits, files, authors, or meta.
@@ -17,7 +18,7 @@ Intended usage:
 - Use the `git-db` CLI for init/update/query workflows.
 
 Non-goals:
-- Programmatic indexing APIs for building the database (kept internal).
+- Stable indexing APIs before 1.0 (expect changes to indexing helpers).
 - Non-SQLite storage backends.
 - Writing or modifying git history.
 

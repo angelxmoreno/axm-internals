@@ -65,6 +65,10 @@ class FakePackageInfo {
         return this.commitList[this.commitList.length - 1] ?? null;
     }
 
+    async commitByHash(hash: string) {
+        return this.commitList.find((commit) => commit.hash === hash) ?? null;
+    }
+
     async commits() {
         return this.commitList.filter((commit) => commit.scope === this.scope);
     }
@@ -118,6 +122,39 @@ describe('ChangelogBuilder', () => {
         const rootEntry = rootData.entries[0];
         const rootLines = rootEntry?.summaryLines ?? [];
         expect(rootLines).toContain('chore: root metadata');
+        expect(rootLines).not.toContain('feat(cli-kit): init');
+    });
+
+    it('continues backfill for non-publishable scopes using changelog metadata', async () => {
+        const commits = [
+            buildCommit('a1', 'feat(repo-cli): init', 'repo-cli'),
+            buildCommit('b1', 'feat(repo-cli): next', 'repo-cli'),
+        ];
+        const info = new FakePackageInfo(commits, null, 'repo-cli');
+        const store = new MemoryStore();
+        await store.writeScope({
+            scope: 'repo-cli',
+            entries: [
+                {
+                    version: '2026-01-01T00:00:00Z',
+                    tag: null,
+                    fromHash: 'a1',
+                    toHash: 'a1',
+                    summaryLines: ['feat(repo-cli): init'],
+                    createdAt: '2026-01-01T00:00:00Z',
+                },
+            ],
+        });
+        const builder = new ChangelogBuilder(info as unknown as PackageInfoService, store as unknown as ChangelogStore);
+        const targets = ['apps/repo-cli'] as PackageApp[];
+
+        const report = await builder.report(targets);
+        expect(report.needsBackfill).toBe(1);
+
+        await builder.backfill(targets);
+        const scopeData = await store.readScope('repo-cli');
+        expect(scopeData.entries.length).toBe(2);
+        expect(scopeData.entries[1]?.summaryLines).toContain('feat(repo-cli): next');
     });
 
     it('renders markdown changelogs from stored entries', async () => {

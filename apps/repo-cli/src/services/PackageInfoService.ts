@@ -89,6 +89,16 @@ export class PackageInfoService {
     }
 
     /**
+     * Resolve a commit by hash.
+     *
+     * @param hash - Commit hash.
+     * @returns Commit or null if missing.
+     */
+    async commitByHash(hash: string): Promise<Commit | null> {
+        return await this.gitQuery.getCommitByHash(hash);
+    }
+
+    /**
      * Fetch commits for a scope between two hashes (inclusive).
      *
      * @param scope - Conventional commit scope (e.g., `cli-kit`).

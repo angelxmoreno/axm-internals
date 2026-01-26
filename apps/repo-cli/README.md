@@ -29,7 +29,9 @@ bun dev changelog:write --all
 - `gitdb:releases` — List released packages and tags.
 - `changesets:create <package-path>` — Create changeset drafts (writes unless `--dry`).
 - `changesets:create --all --dry` — Preview drafts for all packages without writing.
-- `changelog:backfill <package-path>` — Backfill `.changelogs` entries from first commit to first tag.
+- `changelog:backfill <package-path>` — Backfill `.changelogs` entries:
+  - publishable: first commit → first tag
+  - non-publishable: continue from the last JSON entry’s `toHash`
 - `changelog:backfill --all --dry` — Preview backfill report for all packages.
 - `changelog:report <package-path>` — Show backfill/report status for a package.
 - `changelog:write <package-path>` — Render markdown changelogs from `.changelogs` JSON.
@@ -42,6 +44,7 @@ Draft output:
 Changelog output:
 - JSON lives in `.changelogs/` (`root.json` and `<scope>.json` files).
 - Markdown rendering writes `CHANGELOG.md` at the repo root and inside each package/app (generated from `.changelogs/`).
+- Root changelog entries include unscoped commits only.
 
 ## Docs
 

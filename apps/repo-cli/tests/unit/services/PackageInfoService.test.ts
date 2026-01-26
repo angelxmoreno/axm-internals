@@ -115,6 +115,18 @@ describe('PackageInfoService', () => {
         expect(result?.hash).toBe('taghash');
     });
 
+    it('returns commit for hash', async () => {
+        const commit = buildCommit({ hash: 'hash123', scope: 'cli-kit' });
+        const service = new PackageInfoService(
+            createGitQuery({
+                getCommitByHash: async () => commit,
+            })
+        );
+
+        const result = await service.commitByHash('hash123');
+        expect(result?.hash).toBe('hash123');
+    });
+
     it('groups releases by scope', async () => {
         const service = new PackageInfoService(
             createGitQuery({

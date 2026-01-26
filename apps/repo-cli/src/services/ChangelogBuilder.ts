@@ -29,6 +29,28 @@ export class ChangelogBuilder {
         this.store = store;
     }
 
+    protected isPublishable(packagePath: PackageApp): boolean {
+        return packagePath.startsWith('packages/') && packagePath !== 'packages/tooling-config';
+    }
+
+    protected getLatestEntry(scopeData: ScopeChangelog): ChangelogEntry | null {
+        if (scopeData.entries.length === 0) {
+            return null;
+        }
+        return scopeData.entries.slice().sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] ?? null;
+    }
+
+    protected filterUnscoped(commits: Commit[]): Commit[] {
+        return commits.filter((commit) => commit.scope === null);
+    }
+
+    protected removeCommit(commits: Commit[], hash: string | null): Commit[] {
+        if (!hash) {
+            return commits;
+        }
+        return commits.filter((commit) => commit.hash !== hash);
+    }
+
     async initScopes(targets: PackageApp[]): Promise<void> {
         await this.store.ensureDir();
         for (const target of targets) {
@@ -72,7 +94,8 @@ export class ChangelogBuilder {
                 info.fromCommit,
                 info.toCommit,
                 info.scopeCommits,
-                info.rootCommits
+                info.rootCommits,
+                info.versionOverride
             );
         }
 
@@ -121,13 +144,14 @@ export class ChangelogBuilder {
 
     protected async addEntry(
         scope: string,
-        tagName: string,
+        tagName: string | null,
         fromCommit: Commit,
         toCommit: Commit,
         scopeCommits: Commit[],
-        rootCommits: Commit[]
+        rootCommits: Commit[],
+        versionOverride?: string
     ) {
-        const entry = this.buildEntry(tagName, fromCommit, toCommit, scopeCommits);
+        const entry = this.buildEntry(tagName, fromCommit, toCommit, scopeCommits, versionOverride);
         const scopeData = await this.store.readScope(scope);
         const hasEntry = this.hasEntry(scopeData, tagName);
         if (!hasEntry) {
@@ -143,7 +167,10 @@ export class ChangelogBuilder {
             (item) => item.scope === scope && (item.tag === tagName || item.version === entry.version)
         );
         if (!rootHasEntry) {
-            const rootEntry = this.buildEntry(tagName, fromCommit, toCommit, rootCommits);
+            const rootEntry = this.buildEntry(tagName, fromCommit, toCommit, rootCommits, versionOverride);
+            if (rootEntry.summaryLines.length === 0) {
+                return;
+            }
             const nextRoot: RootChangelog = {
                 entries: [
                     ...rootData.entries,
@@ -169,12 +196,43 @@ export class ChangelogBuilder {
         const firstTagName = tags.length > 0 ? (tags[tags.length - 1] ?? null) : null;
         const refs = await this.packageInfo.refs(scope);
         const fromCommit = refs.first;
+        const scopeData = await this.store.readScope(scope);
+        const lastEntry = this.getLatestEntry(scopeData);
+        const isPublishable = this.isPublishable(target);
+
+        if (!isPublishable) {
+            const lastHash = lastEntry?.toHash ?? null;
+            const lastCommit = lastHash ? await this.packageInfo.commitByHash(lastHash) : null;
+            const latestCommit = await this.packageInfo.latest(scope);
+            const startCommit = lastCommit ?? fromCommit;
+            const endCommit = latestCommit;
+            const scopeCommits =
+                startCommit && endCommit ? await this.packageInfo.commits(scope, startCommit.hash, endCommit.hash) : [];
+            const rootCommitsAll =
+                startCommit && endCommit ? await this.packageInfo.commitsAll(startCommit.hash, endCommit.hash) : [];
+            const nextScopeCommits = this.removeCommit(scopeCommits, lastHash);
+            const nextRootCommits = this.removeCommit(this.filterUnscoped(rootCommitsAll), lastHash);
+            const needsBackfill = Boolean(nextScopeCommits.length > 0);
+            const versionOverride = endCommit?.date ?? new Date().toISOString();
+
+            return {
+                scope,
+                firstTagName: null,
+                fromCommit: nextScopeCommits[0] ?? startCommit,
+                toCommit: endCommit,
+                scopeCommits: nextScopeCommits,
+                rootCommits: nextRootCommits,
+                needsBackfill,
+                versionOverride,
+            };
+        }
+
         const toCommit = firstTagName ? await this.packageInfo.commitForTag(firstTagName) : null;
         const scopeCommits =
             fromCommit && toCommit ? await this.packageInfo.commits(scope, fromCommit.hash, toCommit.hash) : [];
-        const rootCommits =
+        const rootCommitsAll =
             fromCommit && toCommit ? await this.packageInfo.commitsAll(fromCommit.hash, toCommit.hash) : [];
-        const scopeData = await this.store.readScope(scope);
+        const rootCommits = this.filterUnscoped(rootCommitsAll);
         const hasEntry = this.hasEntry(scopeData, firstTagName);
         const needsBackfill = Boolean(firstTagName && fromCommit && toCommit && !hasEntry);
 
@@ -197,8 +255,14 @@ export class ChangelogBuilder {
         return scopeData.entries.some((item) => item.tag === tagName || (version && item.version === version));
     }
 
-    protected buildEntry(tagName: string, fromCommit: Commit, toCommit: Commit, commits: Commit[]): ChangelogEntry {
-        const version = this.extractVersion(tagName) ?? '0.0.0';
+    protected buildEntry(
+        tagName: string | null,
+        fromCommit: Commit,
+        toCommit: Commit,
+        commits: Commit[],
+        versionOverride?: string
+    ): ChangelogEntry {
+        const version = versionOverride ?? this.extractVersion(tagName) ?? '0.0.0';
         const summaryLines = commits.map((commit) => commit.message).filter(Boolean);
         return {
             version,

@@ -19,6 +19,7 @@ Notes:
 - Per-package changelogs remain scope-filtered.
 - Publishable packages use tags to determine backfill boundaries.
 - Non-publishable apps/packages use `.changelogs/<scope>.json` metadata (last `toHash`) to track backfill position.
+- Per-package changelogs include commits that match scope or touch files under the package/app path.
 
 1) Create a branch
 ```bash

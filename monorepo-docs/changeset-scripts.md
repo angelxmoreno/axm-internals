@@ -50,6 +50,7 @@ These scripts are intended to be implemented in `apps/repo-cli`. Names are sugge
 - Publishable packages use git tags to determine changelog boundaries.
 - Non-publishable apps/packages use `.changelogs/<scope>.json` metadata (last entry `toHash`) to know where backfill left off.
 - Root changelog contains unscoped commits only (no conventional-commit scope).
+- Package/app changelogs include commits that match scope or touch files under the package/app path.
 
 ## JSON Changelog Strategy (Draft)
 
@@ -150,6 +151,7 @@ Output:
 
 Notes:
 - Non-publishable entries use the ending commit timestamp as the version label.
+- Scope backfill includes file-touched commits for the package/app path.
 
 ### 7) `changelog:report`
 

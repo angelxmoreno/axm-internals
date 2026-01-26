@@ -40,10 +40,6 @@ export class ChangelogBuilder {
         return scopeData.entries.slice().sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] ?? null;
     }
 
-    protected filterUnscoped(commits: Commit[]): Commit[] {
-        return commits.filter((commit) => commit.scope === null);
-    }
-
     protected removeCommit(commits: Commit[], hash: string | null): Commit[] {
         if (!hash) {
             return commits;
@@ -207,11 +203,15 @@ export class ChangelogBuilder {
             const startCommit = lastCommit ?? fromCommit;
             const endCommit = latestCommit;
             const scopeCommits =
-                startCommit && endCommit ? await this.packageInfo.commits(scope, startCommit.hash, endCommit.hash) : [];
+                startCommit && endCommit
+                    ? await this.packageInfo.commitsForPackage(target, scope, startCommit.hash, endCommit.hash)
+                    : [];
             const rootCommitsAll =
-                startCommit && endCommit ? await this.packageInfo.commitsAll(startCommit.hash, endCommit.hash) : [];
+                startCommit && endCommit
+                    ? await this.packageInfo.commitsUnscoped(startCommit.hash, endCommit.hash)
+                    : [];
             const nextScopeCommits = this.removeCommit(scopeCommits, lastHash);
-            const nextRootCommits = this.removeCommit(this.filterUnscoped(rootCommitsAll), lastHash);
+            const nextRootCommits = this.removeCommit(rootCommitsAll, lastHash);
             const needsBackfill = Boolean(nextScopeCommits.length > 0);
             const versionOverride = endCommit?.date ?? new Date().toISOString();
 
@@ -229,10 +229,11 @@ export class ChangelogBuilder {
 
         const toCommit = firstTagName ? await this.packageInfo.commitForTag(firstTagName) : null;
         const scopeCommits =
-            fromCommit && toCommit ? await this.packageInfo.commits(scope, fromCommit.hash, toCommit.hash) : [];
-        const rootCommitsAll =
-            fromCommit && toCommit ? await this.packageInfo.commitsAll(fromCommit.hash, toCommit.hash) : [];
-        const rootCommits = this.filterUnscoped(rootCommitsAll);
+            fromCommit && toCommit
+                ? await this.packageInfo.commitsForPackage(target, scope, fromCommit.hash, toCommit.hash)
+                : [];
+        const rootCommits =
+            fromCommit && toCommit ? await this.packageInfo.commitsUnscoped(fromCommit.hash, toCommit.hash) : [];
         const hasEntry = this.hasEntry(scopeData, firstTagName);
         const needsBackfill = Boolean(firstTagName && fromCommit && toCommit && !hasEntry);
 

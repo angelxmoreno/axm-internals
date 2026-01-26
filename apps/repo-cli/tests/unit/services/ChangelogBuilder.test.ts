@@ -38,11 +38,21 @@ class FakePackageInfo {
     protected commitList: Commit[];
     protected tag: string | null;
     protected scope: string;
+    protected commitsByPackage: Map<string, Commit[]>;
+    protected unscopedCommits: Commit[];
 
-    constructor(commits: Commit[], tag: string | null, scope = 'cli-kit') {
+    constructor(
+        commits: Commit[],
+        tag: string | null,
+        scope = 'cli-kit',
+        commitsByPackage: Map<string, Commit[]> = new Map(),
+        unscopedCommits: Commit[] = []
+    ) {
         this.commitList = commits;
         this.tag = tag;
         this.scope = scope;
+        this.commitsByPackage = commitsByPackage;
+        this.unscopedCommits = unscopedCommits;
     }
 
     async closeDb() {
@@ -71,6 +81,14 @@ class FakePackageInfo {
 
     async commits() {
         return this.commitList.filter((commit) => commit.scope === this.scope);
+    }
+
+    async commitsForPackage(packagePath: string) {
+        return this.commitsByPackage.get(packagePath) ?? [];
+    }
+
+    async commitsUnscoped() {
+        return this.unscopedCommits;
     }
 
     async commitsAll() {
@@ -104,7 +122,11 @@ describe('ChangelogBuilder', () => {
             buildCommit('a1', 'feat(cli-kit): init', 'cli-kit'),
             buildCommit('b1', 'chore: root metadata', null),
         ];
-        const info = new FakePackageInfo(commits, '@axm-internal/cli-kit@0.1.0');
+        const commitsByPackage = new Map<string, Commit[]>();
+        commitsByPackage.set('packages/cli-kit', [commits[0] as Commit]);
+        const info = new FakePackageInfo(commits, '@axm-internal/cli-kit@0.1.0', 'cli-kit', commitsByPackage, [
+            commits[1] as Commit,
+        ]);
         const store = new MemoryStore();
         const builder = new ChangelogBuilder(info as unknown as PackageInfoService, store as unknown as ChangelogStore);
         const targets = ['packages/cli-kit'] as PackageApp[];
@@ -130,7 +152,9 @@ describe('ChangelogBuilder', () => {
             buildCommit('a1', 'feat(repo-cli): init', 'repo-cli'),
             buildCommit('b1', 'feat(repo-cli): next', 'repo-cli'),
         ];
-        const info = new FakePackageInfo(commits, null, 'repo-cli');
+        const commitsByPackage = new Map<string, Commit[]>();
+        commitsByPackage.set('apps/repo-cli', commits);
+        const info = new FakePackageInfo(commits, null, 'repo-cli', commitsByPackage, []);
         const store = new MemoryStore();
         await store.writeScope({
             scope: 'repo-cli',
@@ -157,6 +181,25 @@ describe('ChangelogBuilder', () => {
         const latest = scopeData.entries[1];
         expect(latest?.summaryLines).toContain('feat(repo-cli): next');
         expect(latest?.version).toBe(commits[1]?.date);
+    });
+
+    it('includes commits that touch a package even when the scope differs', async () => {
+        const commits = [
+            buildCommit('a1', 'fix(repo-cli): touched cli-kit', 'repo-cli'),
+            buildCommit('b1', 'feat(cli-kit): scoped', 'cli-kit'),
+        ];
+        const commitsByPackage = new Map<string, Commit[]>();
+        commitsByPackage.set('packages/cli-kit', commits);
+        const info = new FakePackageInfo(commits, '@axm-internal/cli-kit@0.1.0', 'cli-kit', commitsByPackage, []);
+        const store = new MemoryStore();
+        const builder = new ChangelogBuilder(info as unknown as PackageInfoService, store as unknown as ChangelogStore);
+        const targets = ['packages/cli-kit'] as PackageApp[];
+
+        await builder.backfill(targets);
+        const scopeData = await store.readScope('cli-kit');
+        const lines = scopeData.entries[0]?.summaryLines ?? [];
+        expect(lines).toContain('fix(repo-cli): touched cli-kit');
+        expect(lines).toContain('feat(cli-kit): scoped');
     });
 
     it('renders markdown changelogs from stored entries', async () => {

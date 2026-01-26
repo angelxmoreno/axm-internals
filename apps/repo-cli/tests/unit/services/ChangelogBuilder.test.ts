@@ -154,7 +154,9 @@ describe('ChangelogBuilder', () => {
         await builder.backfill(targets);
         const scopeData = await store.readScope('repo-cli');
         expect(scopeData.entries.length).toBe(2);
-        expect(scopeData.entries[1]?.summaryLines).toContain('feat(repo-cli): next');
+        const latest = scopeData.entries[1];
+        expect(latest?.summaryLines).toContain('feat(repo-cli): next');
+        expect(latest?.version).toBe(commits[1]?.date);
     });
 
     it('renders markdown changelogs from stored entries', async () => {

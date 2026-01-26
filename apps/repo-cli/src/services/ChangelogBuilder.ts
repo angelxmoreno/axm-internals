@@ -84,7 +84,7 @@ export class ChangelogBuilder {
                 continue;
             }
 
-            if (!info.firstTagName || !info.fromCommit || !info.toCommit) {
+            if (!info.fromCommit || !info.toCommit) {
                 continue;
             }
 

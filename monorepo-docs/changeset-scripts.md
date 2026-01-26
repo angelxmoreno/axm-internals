@@ -63,6 +63,39 @@ These scripts are intended to be implemented in `apps/repo-cli`. Names are sugge
   - `.changelogs/<scope>.json` for per-package/app changelogs.
   - Root JSON is derived from unscoped commits only.
 
+## Changelog Generation Flow
+
+1) Index git history (required for any changelog work):
+
+```bash
+./repo-cli gitdb:index
+```
+
+2) Backfill JSON entries:
+
+```bash
+./repo-cli changelog:backfill --all
+```
+
+- Publishable packages use tags to determine the backfill range.
+- Non-publishable apps/packages continue from the last JSON entry’s `toHash`.
+- Scope entries include commits that match scope or touch files under the package/app path.
+- Root entries include unscoped commits only.
+
+3) Render markdown changelogs from JSON:
+
+```bash
+./repo-cli changelog:write --all
+```
+
+## Notes on DRY / Simplification
+
+- The JSON files are the single source of truth; markdown is derived output.
+- If you only need JSON, skip `changelog:write`.
+- If you need both JSON + markdown, you only need two commands after indexing:
+  - `changelog:backfill --all`
+  - `changelog:write --all`
+
 ### 1) `gitdb:index`
 
 Purpose:

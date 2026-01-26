@@ -95,3 +95,4 @@ chore(changesets): created release changesets
 - Changelog JSON lives in `.changelogs/` and is the source of truth.
 - Markdown changelogs are generated from JSON via `changelog:write`.
 - If you want to target a single package, replace `--all` with `packages/<name>`.
+- If you only need JSON, skip `changelog:write`.

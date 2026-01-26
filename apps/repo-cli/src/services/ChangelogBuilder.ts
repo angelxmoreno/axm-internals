@@ -176,6 +176,8 @@ export class ChangelogBuilder {
                         tag: rootEntry.tag,
                         fromHash: rootEntry.fromHash,
                         toHash: rootEntry.toHash,
+                        rangeStartDate: rootEntry.rangeStartDate,
+                        rangeEndDate: rootEntry.rangeEndDate,
                         summaryLines: rootEntry.summaryLines,
                         createdAt: rootEntry.createdAt,
                     },
@@ -272,6 +274,8 @@ export class ChangelogBuilder {
             tag: tagName,
             fromHash: fromCommit.hash,
             toHash: toCommit.hash,
+            rangeStartDate: fromCommit.date,
+            rangeEndDate: toCommit.date,
             summaryLines,
             createdAt: new Date().toISOString(),
         };
@@ -293,7 +297,7 @@ export class ChangelogBuilder {
         const file = Bun.file(filePath);
         const lines = data.entries
             .slice()
-            .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+            .sort((a, b) => b.rangeEndDate.localeCompare(a.rangeEndDate))
             .map((entry) => {
                 const bullets = entry.summaryLines.map((line) => `- ${line}`).join('\n');
                 return `## ${entry.version}\n${bullets}`;
@@ -306,10 +310,10 @@ export class ChangelogBuilder {
         const file = Bun.file('CHANGELOG.md');
         const lines = data.entries
             .slice()
-            .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+            .sort((a, b) => b.rangeEndDate.localeCompare(a.rangeEndDate))
             .map((entry) => {
                 const bullets = entry.summaryLines.map((line) => `- ${line}`).join('\n');
-                return `## ${entry.createdAt}\n${bullets}`;
+                return `## ${entry.rangeEndDate}\n${bullets}`;
             });
         const content = `${['# Changelog', ...lines].join('\n\n')}\n`;
         await Bun.write(file, content);

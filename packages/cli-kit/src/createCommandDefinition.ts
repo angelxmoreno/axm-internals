@@ -15,10 +15,11 @@ import type { CommandDefinition } from './schemas/CommandDefinitionSchemaFactory
 export type CommandContextForSchemas<
     ArgsSchema extends z.ZodObject<z.ZodRawShape>,
     OptionsSchema extends z.ZodObject<z.ZodRawShape>,
+    TContainer = ContainerInterface,
 > = {
     args: z.infer<ArgsSchema>;
     options: z.infer<OptionsSchema>;
-    container: ContainerInterface;
+    container: TContainer;
 };
 
 /**
@@ -39,7 +40,8 @@ export type CommandContextForSchemas<
  * });
  * ```
  */
-export function createCommandDefinition<
+export const createCommandDefinition = <
+    TContainer = ContainerInterface,
     ArgsSchema extends z.ZodObject<z.ZodRawShape> = z.ZodObject<z.ZodRawShape>,
     OptionsSchema extends z.ZodObject<z.ZodRawShape> = z.ZodObject<z.ZodRawShape>,
 >(definition: {
@@ -48,7 +50,5 @@ export function createCommandDefinition<
     argsSchema?: ArgsSchema;
     optionsSchema?: OptionsSchema;
     argPositions?: string[];
-    action: (ctx: CommandContextForSchemas<ArgsSchema, OptionsSchema>) => Promise<void>;
-}): CommandDefinition {
-    return definition as CommandDefinition;
-}
+    action: (ctx: CommandContextForSchemas<ArgsSchema, OptionsSchema, TContainer>) => Promise<void>;
+}): CommandDefinition => definition as CommandDefinition;
